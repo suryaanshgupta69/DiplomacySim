@@ -1,0 +1,129 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function adminEmails() {
+      return get(/databases/$(database)/documents/config/admin).data.adminEmails;
+    }
+
+    function isAdmin() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/config/admin)
+        && request.auth.token.email in adminEmails();
+    }
+
+    function validText(value, min, max) {
+      return value is string
+        && value.size() >= min
+        && value.size() <= max;
+    }
+
+    function validIsoString(value) {
+      return value is string && value.size() >= 10 && value.size() <= 40;
+    }
+
+    match /config/{docId} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    match /scenarios/{scenarioId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /users/{userId} {
+      allow read: if signedIn();
+      allow create: if isOwner(userId)
+        && request.resource.data.keys().hasOnly([
+          'email',
+          'username',
+          'displayName',
+          'photoDataUrl',
+          'photo_updated_at',
+          'total_points',
+          'scenarios_played',
+          'top_theatre',
+          'updated_at',
+          'created_at'
+        ]);
+      allow update: if isOwner(userId)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'email',
+          'username',
+          'displayName',
+          'photoDataUrl',
+          'photo_updated_at',
+          'total_points',
+          'scenarios_played',
+          'top_theatre',
+          'updated_at',
+          'created_at'
+        ]);
+      allow delete: if isAdmin();
+    }
+
+    match /responses/{responseId} {
+      allow read: if signedIn();
+      allow create, update: if signedIn()
+        && request.resource.data.user_id == request.auth.uid
+        && request.resource.data.points_earned is number
+        && request.resource.data.points_earned >= 0
+        && request.resource.data.points_earned <= 115;
+      allow delete: if isAdmin();
+    }
+
+    match /forum/{postId} {
+      allow read: if true;
+      allow create: if signedIn()
+        && request.resource.data.user_id == request.auth.uid
+        && validText(request.resource.data.username, 1, 40)
+        && validText(request.resource.data.message, 1, 500)
+        && validIsoString(request.resource.data.created_at)
+        && request.resource.data.keys().hasOnly([
+          'user_id',
+          'username',
+          'photoDataUrl',
+          'message',
+          'parent_id',
+          'created_at'
+        ]);
+      allow update: if false;
+      allow delete: if isAdmin()
+        || (signedIn() && resource.data.user_id == request.auth.uid);
+    }
+
+    match /ratings/{ratingId} {
+      allow read: if true;
+      allow create, update: if signedIn()
+        && ratingId == request.auth.uid + '_' + request.resource.data.scenario_id
+        && request.resource.data.user_id == request.auth.uid
+        && request.resource.data.rating is number
+        && request.resource.data.rating >= 1
+        && request.resource.data.rating <= 5;
+      allow delete: if isAdmin();
+    }
+
+    match /reports/{reportId} {
+      allow read, update, delete: if isAdmin();
+      allow create: if request.resource.data.keys().hasOnly([
+          'scenario_id',
+          'scenario_title',
+          'reason',
+          'reported_at',
+          'reporter_uid'
+        ])
+        && validText(request.resource.data.scenario_id, 1, 120)
+        && validText(request.resource.data.reason, 1, 500)
+        && validIsoString(request.resource.data.reported_at);
+    }
+  }
+}

@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8"/>
+ <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+ <title>DiplomacySim · Admin</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:image" content="https://res.cloudinary.com/djkzjki1t/image/upload/w_1200,h_630,c_fill,g_center/diplomacysim_og.jpg"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:image" content="https://res.cloudinary.com/djkzjki1t/image/upload/w_1200,h_630,c_fill,g_center/diplomacysim_og.jpg"/>
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+ <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=UnifrakturMaguntia&family=IM+Fell+English:ital@0;1&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+ <style>
+   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+   :root {
+     --ink:       #1a1713;
+     --ink-light: #3d3a34;
+     --ink-muted: #6a6460;
+     --rule:      #1a1713;
+     --paper:     #f5f0e8;
+     --paper-alt: #ede8db;
+     --cream:     #faf7f2;
+     --accent:    #8b1a1a;
+     --success:   #2a6b1a;
+   }
+
+   body {
+     background-color: var(--cream);
+     color: var(--ink);
+     font-family: 'Libre Baskerville', Georgia, serif;
+     -webkit-font-smoothing: antialiased;
+     min-height: 100vh;
+   }
+
+   .page {
+     max-width: 1100px;
+     margin: 0 auto;
+     padding: 0 32px 64px;
+     background: var(--paper);
+     box-shadow: 0 0 60px rgba(0,0,0,0.12);
+     border-left: 1px solid #c8c0b0;
+     border-right: 1px solid #c8c0b0;
+   }
+
+   /* ── Top bar ── */
+   .topbar {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     padding: 10px 0;
+     border-bottom: 1px solid var(--rule);
+     font-size: 11px;
+     letter-spacing: 0.08em;
+     color: var(--ink-muted);
+   }
+   .topbar a { color: var(--ink-muted); text-decoration: none; }
+   .topbar a:hover { color: var(--accent); }
+   .topbar-center { display: flex; gap: 18px; align-items: center; }
+
+   /* ── User pill ── */
+   .user-pill { display: none; align-items: center; gap: 10px; }
+   .user-pill-name {
+     font-family: 'Libre Baskerville', serif;
+     font-size: 11px; font-weight: 700; color: var(--ink);
+     letter-spacing: 0.04em; max-width: 160px;
+     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+   }
+   .user-pill-name span { font-weight: 400; color: var(--ink-muted); margin-right: 4px; }
+   .signout-btn {
+     font-family: 'Libre Baskerville', serif;
+     font-size: 10px; font-weight: 700; letter-spacing: 0.14em;
+     text-transform: uppercase; color: #fff; background: var(--accent);
+     border: none; padding: 5px 12px; cursor: pointer; transition: background 0.15s;
+   }
+   .signout-btn:hover { background: #6a0f0f; }
+
+   /* ── Masthead ── */
+   .masthead {
+     text-align: center;
+     padding: 28px 0 18px;
+     border-bottom: 3px double var(--rule);
+   }
+   .masthead-eyebrow {
+     font-size: 10.5px; letter-spacing: 0.28em; text-transform: uppercase;
+     color: var(--ink-muted); margin-bottom: 10px;
+   }
+   .masthead-title {
+     font-family: 'UnifrakturMaguntia', cursive;
+     font-size: clamp(52px, 8vw, 90px); line-height: 1; color: var(--ink);
+   }
+   .masthead-rule { display: flex; align-items: center; gap: 12px; margin: 14px 0 10px; }
+   .masthead-rule::before, .masthead-rule::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
+   .masthead-rule-diamond { width: 6px; height: 6px; background: var(--ink); transform: rotate(45deg); flex-shrink: 0; }
+   .masthead-tagline { font-family: 'IM Fell English', serif; font-style: italic; font-size: 15px; color: var(--ink-light); }
+   .masthead-meta {
+     display: flex; justify-content: space-between; font-size: 11px;
+     letter-spacing: 0.06em; color: var(--ink-muted);
+     margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--rule);
+   }
+
+   /* ── Nav ── */
+   .nav-strip { display: flex; justify-content: center; border-bottom: 3px solid var(--rule); }
+   .nav-strip a {
+     font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+     color: var(--ink); text-decoration: none; padding: 9px 18px;
+     border-right: 1px solid var(--rule); transition: background 0.15s, color 0.15s;
+   }
+   .nav-strip a:first-child { border-left: 1px solid var(--rule); }
+   .nav-strip a:hover { background: var(--ink); color: var(--paper); }
+   .nav-strip a.active { background: var(--accent); color: var(--paper); }
+   #nav-auth-link.signout { color: var(--paper); background: var(--accent); border-color: var(--accent); }
+   #nav-auth-link.signout:hover { background: #6a0f0f; }
+
+   /* ── Section label ── */
+   .section-label {
+     font-size: 10px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
+     color: var(--paper); background: var(--ink); display: inline-block; padding: 3px 10px;
+   }
+   .section-label.red { background: var(--accent); }
+
+   /* ── Layout ── */
+   .admin-layout {
+     display: grid;
+     grid-template-columns: 1.8fr 2px 1fr;
+     gap: 0;
+     padding: 28px 0;
+   }
+   .col-divider { background: #c8c0b0; width: 1px; margin: 0 28px; }
+
+   /* ── Typography ── */
+   .headline-lg {
+     font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700;
+     line-height: 1.1; color: var(--ink); margin-bottom: 4px;
+   }
+   .deck { font-family: 'IM Fell English', serif; font-style: italic; font-size: 14px; color: var(--ink-muted); margin-bottom: 20px; line-height: 1.5; }
+   .field-label {
+     display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.18em;
+     text-transform: uppercase; color: var(--ink-muted); margin-bottom: 6px;
+     font-family: 'Libre Baskerville', serif;
+   }
+   .field-note { font-size: 11px; font-style: italic; color: var(--ink-muted); margin-top: 4px; font-family: 'Libre Baskerville', serif; }
+
+   /* ── Form elements ── */
+   .form-group { margin-bottom: 20px; }
+   input[type="text"], input[type="number"], textarea, select {
+     width: 100%; font-family: 'Libre Baskerville', Georgia, serif; font-size: 13px;
+     color: var(--ink); background: var(--cream); border: 1px solid #c8c0b0;
+     border-bottom: 2px solid var(--ink); padding: 9px 12px; outline: none;
+     transition: border-color 0.15s, background 0.15s;
+     appearance: none; -webkit-appearance: none; border-radius: 0;
+   }
+   input[type="text"]:focus, input[type="number"]:focus, textarea:focus, select:focus {
+     background: #fff; border-color: var(--ink); border-bottom-color: var(--accent);
+   }
+   textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+   select {
+     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%231a1713' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+     background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; cursor: pointer;
+   }
+
+   /* ── Option blocks ── */
+   .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+   .option-block {
+     border: 1px solid #c8c0b0; border-top: 3px solid var(--ink);
+     padding: 14px; background: var(--cream); position: relative;
+   }
+   .option-block.a { border-top-color: #1a4a1a; }
+   .option-block.b { border-top-color: #1a2a4a; }
+   .option-block.c { border-top-color: #4a3a1a; }
+   .option-block.d { border-top-color: var(--accent); }
+   .option-flag { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 900; line-height: 1; margin-bottom: 10px; display: block; }
+   .option-block.a .option-flag { color: #1a4a1a; }
+   .option-block.b .option-flag { color: #1a2a4a; }
+   .option-block.c .option-flag { color: #4a3a1a; }
+   .option-block.d .option-flag { color: var(--accent); }
+   .option-block .field-label { margin-top: 10px; }
+   .option-block input[type="text"], .option-block textarea, .option-block input[type="number"] { font-size: 12px; padding: 7px 10px; }
+   .option-block textarea { min-height: 60px; }
+   .points-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+   .points-row input[type="number"] { width: 80px; text-align: center; font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; }
+   .points-row .pts-label { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-muted); }
+
+   /* ── Dividers ── */
+   hr.thick  { border: none; border-top: 3px solid var(--rule); margin: 20px 0; }
+   hr.thin   { border: none; border-top: 1px solid #c8c0b0; margin: 16px 0; }
+   hr.double { border: none; border-top: 3px double var(--rule); margin: 20px 0; }
+
+   /* ── Buttons ── */
+   .submit-btn {
+     display: block; width: 100%; font-family: 'Libre Baskerville', serif;
+     font-size: 12px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+     color: var(--paper); background: var(--ink); border: 2px solid var(--ink);
+     padding: 13px 28px; cursor: pointer; transition: background 0.15s; margin-top: 24px;
+   }
+   .submit-btn:hover:not(:disabled) { background: var(--accent); border-color: var(--accent); }
+   .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+   .clear-btn {
+     display: block; width: 100%; font-family: 'Libre Baskerville', serif;
+     font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+     color: var(--ink-muted); background: transparent; border: 1px solid #c8c0b0;
+     padding: 10px 28px; cursor: pointer; transition: border-color 0.15s, color 0.15s; margin-top: 10px;
+   }
+   .clear-btn:hover { border-color: var(--ink); color: var(--ink); }
+   .spinner {
+     display: inline-block; width: 12px; height: 12px;
+     border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff;
+     border-radius: 50%; animation: spin 0.6s linear infinite;
+     margin-right: 8px; vertical-align: middle;
+   }
+   .spinner-dark {
+     display: inline-block; width: 11px; height: 11px;
+     border: 2px solid rgba(26,23,19,0.2); border-top-color: var(--ink);
+     border-radius: 50%; animation: spin 0.6s linear infinite;
+     margin-right: 6px; vertical-align: middle;
+   }
+   @keyframes spin { to { transform: rotate(360deg); } }
+
+   /* ── Image generation area ── */
+   .img-gen-row {
+     display: flex;
+     align-items: center;
+     gap: 10px;
+     margin-top: 8px;
+   }
+   .gen-img-btn {
+     flex-shrink: 0;
+     font-family: 'Libre Baskerville', serif;
+     font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+     color: var(--ink); background: var(--cream);
+     border: 1px solid var(--ink); border-bottom: 2px solid var(--ink);
+     padding: 8px 14px; cursor: pointer;
+     transition: background 0.15s, color 0.15s;
+     white-space: nowrap;
+   }
+   .gen-img-btn:hover:not(:disabled) { background: var(--ink); color: var(--paper); }
+   .gen-img-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+   /* ── Image preview panel ── */
+   #img-preview-wrap {
+     display: none;
+     margin-top: 14px;
+     border: 1px solid #c8c0b0;
+     border-top: 3px solid var(--ink);
+     background: var(--cream);
+     padding: 12px;
+     position: relative;
+   }
+   #img-preview-wrap .preview-label {
+     font-size: 9px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
+     color: var(--ink-muted); font-family: 'Libre Baskerville', serif;
+     margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
+   }
+   #img-preview-wrap .preview-label .regen-link {
+     font-size: 9px; letter-spacing: 0.12em; color: var(--accent);
+     cursor: pointer; text-decoration: underline; font-weight: 700;
+   }
+   #img-preview-wrap .preview-label .regen-link:hover { color: #6a0f0f; }
+   #scenario-image-preview {
+     width: 100%;
+     display: block;
+     border: 1px solid #d8d0c0;
+     aspect-ratio: 16/9;
+     object-fit: cover;
+   }
+   #img-preview-wrap .img-prompt-note {
+     font-size: 10px; font-style: italic; color: var(--ink-muted);
+     font-family: 'Libre Baskerville', serif; margin-top: 8px; line-height: 1.5;
+   }
+
+   /* skeleton shimmer while loading */
+   .img-skeleton {
+     width: 100%; aspect-ratio: 16/9;
+     background: linear-gradient(90deg, #e8e2d6 25%, #f0ebe0 50%, #e8e2d6 75%);
+     background-size: 200% 100%;
+     animation: shimmer 1.4s infinite;
+     border: 1px solid #d8d0c0;
+   }
+   @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+   /* ── Toast ── */
+   #toast {
+     display: none; border: 2px solid var(--success);
+     background: #f0f5f0; padding: 14px 18px; margin-bottom: 20px;
+   }
+   #toast.error { border-color: var(--accent); background: #f5f0f0; }
+   #toast p { font-size: 12.5px; font-family: 'Libre Baskerville', serif; color: var(--success); }
+   #toast.error p { color: var(--accent); }
+   #toast .toast-head { font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 4px; color: var(--success); }
+   #toast.error .toast-head { color: var(--accent); }
+
+   /* ── Sidebar ── */
+   .sidebar-box {
+     border: 1px solid #c8c0b0; border-top: 3px solid var(--ink);
+     padding: 16px; margin-bottom: 20px; background: var(--cream);
+   }
+   .sidebar-box-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #c8c0b0; }
+   .guide-row { display: flex; gap: 10px; margin-bottom: 12px; align-items: flex-start; }
+   .guide-num { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 900; color: var(--ink-muted); flex-shrink: 0; width: 22px; line-height: 1; }
+   .guide-text { font-size: 12px; line-height: 1.6; color: var(--ink-muted); font-family: 'Libre Baskerville', serif; }
+   .guide-text strong { color: var(--ink); font-weight: 700; }
+   .pts-scale { width: 100%; border-collapse: collapse; margin-top: 8px; }
+   .pts-scale td { font-family: 'Libre Baskerville', serif; font-size: 11.5px; padding: 6px 4px; border-bottom: 1px solid #d8d0c0; color: var(--ink-light); vertical-align: top; }
+   .pts-scale tr:last-child td { border-bottom: none; }
+   .pts-scale td:first-child { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 14px; color: var(--ink); width: 52px; }
+   .count-badge { display: inline-block; font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 900; color: var(--ink); line-height: 1; }
+   .count-label { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-muted); font-family: 'Libre Baskerville', serif; display: block; margin-top: 2px; }
+
+   /* ── Footer ── */
+   .footer {
+     border-top: 3px double var(--rule); padding: 18px 0; display: flex;
+     justify-content: space-between; align-items: center; font-size: 11px; color: var(--ink-muted); margin-top: 24px;
+   }
+   .footer a { color: var(--ink-muted); text-decoration: none; }
+   .footer a:hover { color: var(--accent); }
+
+   /* ── Access denied / gating ── */
+   #access-denied { display: none; text-align: center; padding: 80px 0; }
+   #main-content  { display: none; }
+ </style>
+ <link rel="stylesheet" href="style.css?v=20260609pro">
+ <script src="transitions.js?v=20260609pro" defer></script>
+ <script src="sounds.js?v=20260609pro" defer></script>
+</head>
+<body>
+<div class="page">
+
+ <!-- Top bar -->
+ <div class="topbar">
+   <span>Established MMXXIV &nbsp;·&nbsp; Scenario Desk</span>
+   <div class="topbar-center">
+     <a href="index.html">Front Page</a>
+     <span>·</span>
+     <a href="leaderboard.html">Rankings</a>
+     <span>·</span>
+     <a href="login.html" id="topbar-signin-link" style="display:none;">Sign In</a>
+     <div class="user-pill" id="user-pill">
+       <div class="user-pill-name"><span>Signed in as </span><span id="user-display-name">—</span></div>
+       <button class="signout-btn" onclick="doSignOut()">Sign Out</button>
+     </div>
+   </div>
+   <span id="topbar-date"></span>
+ </div>
+
+ <!-- Masthead -->
+ <div class="masthead">
+   <div class="masthead-eyebrow">Restricted Access &nbsp;·&nbsp; Scenario Operations</div>
+   <div class="masthead-title">DiplomacySim</div>
+   <div class="masthead-rule">
+     <div class="masthead-rule-diamond"></div>
+     <div class="masthead-rule-diamond"></div>
+     <div class="masthead-rule-diamond"></div>
+   </div>
+   <div class="masthead-tagline">Scenario publishing, scoring, and archive management</div>
+   <div class="masthead-meta">
+     <span>Create &nbsp;·&nbsp; Score &nbsp;·&nbsp; Publish Briefings</span>
+     <span id="admin-user-display">Not signed in</span>
+   </div>
+ </div>
+
+ <!-- Nav -->
+ <nav class="nav-strip">
+   <a href="index.html">Home</a>
+   <a href="categories.html">Play Now</a>
+   <a href="leaderboard.html">Leaderboard</a>
+   <a href="forum.html">Forum</a>
+   <a href="login.html" id="nav-auth-link" style="display:none;">Sign In</a>
+   <a href="admin.html" class="active">Admin</a>
+ </nav>
+<script src="nav-init.js"></script>
+
+ <!-- Access Denied -->
+ <div id="access-denied">
+   <div style="font-family:'Playfair Display',serif;font-size:64px;font-weight:900;color:var(--ink-muted);line-height:1;">403</div>
+   <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--ink);margin:12px 0 8px;">Access Restricted</div>
+   <div style="font-family:'IM Fell English',serif;font-style:italic;font-size:14px;color:var(--ink-muted);margin-bottom:24px;">This desk is reserved for credentialed editorial staff only.</div>
+   <a href="index.html" style="font-family:'Libre Baskerville',serif;font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--paper);background:var(--ink);padding:11px 28px;text-decoration:none;">Return to Front Page</a>
+ </div>
+
+ <!-- Main content (admins only) -->
+ <div id="main-content">
+
+   <div id="toast" style="margin-top:20px;">
+     <div class="toast-head" id="toast-head">Dispatch Filed</div>
+     <p id="toast-msg">Scenario published successfully.</p>
+   </div>
+
+   <div class="admin-layout">
+
+     <!-- LEFT: Form -->
+     <div>
+       <span class="section-label red">Scenario Desk</span>
+       <div style="height:14px;"></div>
+
+       <!-- Tab strip -->
+       <div style="display:flex;gap:0;border:1px solid #c8c0b0;border-bottom:2px solid var(--ink);margin-bottom:18px;overflow:hidden;">
+         <button id="tab-new" onclick="switchAdminTab('new')" style="flex:1;padding:8px 14px;font-family:'Libre Baskerville',serif;font-size:10.5px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;border:none;cursor:pointer;background:var(--ink);color:var(--paper);">New Scenario</button>
+         <button id="tab-edit" onclick="switchAdminTab('edit')" style="flex:1;padding:8px 14px;font-family:'Libre Baskerville',serif;font-size:10.5px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;border:none;border-left:1px solid #c8c0b0;cursor:pointer;background:var(--paper);color:var(--ink-muted);">Edit Existing</button>
+         <button id="tab-import" onclick="switchAdminTab('import')" style="flex:1;padding:8px 14px;font-family:'Libre Baskerville',serif;font-size:10.5px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;border:none;border-left:1px solid #c8c0b0;cursor:pointer;background:var(--paper);color:var(--ink-muted);">Batch Import</button>
+       </div>
+
+       <!-- Batch Import tab -->
+       <div id="import-tab" style="display:none;">
+         <div class="headline-lg">Batch Import Scenarios</div>
+         <div class="deck">Upload a JSON file containing multiple scenarios. Each scenario must match the standard schema.</div>
+         <hr class="thin">
+
+         <!-- Drop zone -->
+         <div id="import-dropzone" style="border:2px dashed #c8c0b0;border-radius:2px;padding:32px 24px;text-align:center;background:var(--cream);cursor:pointer;transition:border-color 0.15s,background 0.15s;margin-bottom:16px;"
+           onclick="document.getElementById('import-file').click()"
+           ondragover="event.preventDefault();this.style.borderColor='var(--ink)';this.style.background='#ede8db';"
+           ondragleave="this.style.borderColor='#c8c0b0';this.style.background='var(--cream)';"
+           ondrop="handleImportDrop(event)">
+           <div style="font-family:'Playfair Display',serif;font-size:28px;color:var(--ink-muted);margin-bottom:8px;">⬆</div>
+           <div style="font-family:'Libre Baskerville',serif;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px;">Drop JSON file here or click to browse</div>
+           <div style="font-family:'Libre Baskerville',serif;font-size:11px;font-style:italic;color:var(--ink-muted);">Accepts .json files only</div>
+         </div>
+         <input type="file" id="import-file" accept=".json" style="display:none;" onchange="handleImportFile(event)">
+
+         <!-- Preview panel -->
+         <div id="import-preview" style="display:none;margin-bottom:16px;">
+           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+             <div>
+               <span style="font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--ink);" id="import-count">0</span>
+               <span style="font-family:'Libre Baskerville',serif;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-muted);margin-left:6px;">scenarios parsed</span>
+             </div>
+             <button onclick="clearImport()" style="font-family:'Libre Baskerville',serif;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);background:transparent;border:1px solid var(--accent);padding:5px 12px;cursor:pointer;">✕ Clear</button>
+           </div>
+           <div id="import-scenario-list" style="max-height:200px;overflow-y:auto;border:1px solid #c8c0b0;font-family:'Libre Baskerville',serif;font-size:12px;"></div>
+           <div id="import-errors" style="display:none;margin-top:10px;padding:10px 14px;border:1px solid var(--accent);border-left:4px solid var(--accent);background:#f5f0f0;font-size:12px;font-family:'Libre Baskerville',serif;color:var(--accent);"></div>
+         </div>
+
+         <!-- JSON Schema reference -->
+         <div style="background:var(--cream);border:1px solid #c8c0b0;border-left:3px solid var(--ink);padding:14px 16px;margin-bottom:16px;font-family:'Libre Baskerville',serif;font-size:11.5px;color:var(--ink-muted);">
+           <div style="font-weight:700;color:var(--ink);margin-bottom:8px;letter-spacing:0.06em;text-transform:uppercase;font-size:10px;">Required JSON Schema</div>
+           <pre style="font-family:monospace;font-size:11px;line-height:1.7;white-space:pre-wrap;color:var(--ink-light);">[
+  {
+    "category": "Historical Events",
+    "title": "Scenario title",
+    "description": "Situation brief…",
+    "question": "Decision prompt…",
+    "optionA": "…", "optionB": "…", "optionC": "…", "optionD": "…",
+    "impactA": "…", "impactB": "…", "impactC": "…", "impactD": "…",
+    "pointsA": 80,  "pointsB": 60,  "pointsC": 30,  "pointsD": 10
+  }
+]</pre>
+         </div>
+
+         <button id="import-btn" class="submit-btn" onclick="runBatchImport()" disabled style="opacity:0.5;">
+           <span id="import-btn-text">Upload Scenarios to Firebase</span>
+         </button>
+       </div>
+
+       <!-- Edit tab: search existing -->
+       <div id="edit-tab" style="display:none;">
+         <div class="headline-lg">Edit a Scenario</div>
+         <div class="deck">Search by title to load an existing scenario into the form for editing.</div>
+         <hr class="thin">
+         <div style="display:flex;gap:8px;margin-bottom:14px;">
+           <input id="edit-search-input" type="text" placeholder="Search scenario title…" style="flex:1;padding:8px 12px;border:1px solid #c8c0b0;font-family:'Libre Baskerville',serif;font-size:13px;color:var(--ink);background:var(--cream);">
+           <button onclick="searchScenarios()" style="padding:8px 16px;background:var(--ink);color:var(--paper);border:none;font-family:'Libre Baskerville',serif;font-size:11px;font-weight:700;letter-spacing:0.1em;cursor:pointer;">Search</button>
+         </div>
+         <div id="edit-search-results" style="margin-bottom:14px;"></div>
+         <div id="edit-mode-banner" style="display:none;background:var(--paper-alt);border:1px solid #c8c0b0;border-left:4px solid var(--accent);padding:10px 14px;font-size:12px;font-family:'Libre Baskerville',serif;color:var(--ink-muted);margin-bottom:14px;">
+           Editing: <strong id="edit-mode-title"></strong> — <a href="#" onclick="cancelEdit();return false;" style="color:var(--accent);">Cancel edit</a>
+         </div>
+       </div>
+
+       <div id="new-tab-header">
+         <div class="headline-lg">Publish a New Briefing</div>
+         <div class="deck">Write the situation, define four distinct directives, and assign point values that reward judgment instead of drama.</div>
+       </div>
+
+       <hr class="thin">
+
+       <div class="form-group">
+         <label class="field-label" for="scenario-category">Theatre / Category</label>
+         <select id="scenario-category">
+           <option value="">— Select a category —</option>
+           <option value="Current Affairs">Current Affairs</option>
+           <option value="Historical Events">Historical Events</option>
+           <option value="Fictional Scenarios">Fictional Scenarios</option>
+           <option value="Economic Strategy">Economic Strategy</option>
+           <option value="Global Diplomacy">Global Diplomacy</option>
+           <option value="Intelligence & Espionage">Intelligence &amp; Espionage</option>
+           <option value="Nuclear Brinkmanship">Nuclear Brinkmanship</option>
+           <option value="Environmental Crises">Environmental Crises</option>
+           <option value="Humanitarian & Human Rights">Humanitarian &amp; Human Rights</option>
+           <option value="Cyber Warfare">Cyber Warfare</option>
+         </select>
+       </div>
+
+       <div class="form-group">
+         <label class="field-label" for="scenario-title">Scenario Title</label>
+         <input type="text" id="scenario-title" placeholder="e.g. The South China Sea Accord"/>
+       </div>
+
+       <div class="form-group">
+         <label class="field-label" for="scenario-description">Situation Brief</label>
+         <textarea id="scenario-description" style="min-height:100px;" placeholder="Set the scene. Provide geopolitical context, key actors, and the situation the player inherits…"></textarea>
+         <div class="field-note">This is the core context players read before choosing a directive.</div>
+
+         <!-- Scene artwork controls -->
+         <div class="img-gen-row" style="margin-top:10px;">
+           <button class="gen-img-btn" id="gen-img-btn" onclick="generateScenarioImage()" type="button">
+             Generate Scene Image
+           </button>
+           <span style="font-size:11px;font-style:italic;color:var(--ink-muted);font-family:'Libre Baskerville',serif;">
+             Uses the title and brief to create a scene illustration.
+           </span>
+         </div>
+
+         <!-- Image preview panel -->
+         <div id="img-preview-wrap">
+           <div class="preview-label">
+             <span>Scene illustration saved with this scenario</span>
+             <span class="regen-link" onclick="generateScenarioImage()">↻ Regenerate</span>
+           </div>
+           <div id="img-skeleton" class="img-skeleton" style="display:none;"></div>
+           <img id="scenario-image-preview" alt="Scenario illustration" style="display:none;"/>
+           <div class="img-prompt-note" id="img-prompt-note"></div>
+         </div>
+       </div>
+
+       <div class="form-group">
+         <label class="field-label" for="scenario-question">Decision Prompt</label>
+         <textarea id="scenario-question" style="min-height:60px;" placeholder="e.g. As Foreign Minister, how do you respond to the naval incursion?"></textarea>
+         <div class="field-note">Give the player a clear role and a specific decision to make.</div>
+       </div>
+
+       <hr class="thick">
+
+       <span class="section-label">Four Directives</span>
+       <div style="height:14px;"></div>
+       <div class="options-grid">
+
+         <div class="option-block a">
+           <span class="option-flag">A</span>
+           <label class="field-label" for="optA">Option Text</label>
+           <input type="text" id="optA" placeholder="The player's choice wording…"/>
+           <label class="field-label" for="impactA">Consequence / Impact</label>
+           <textarea id="impactA" placeholder="What happens after this choice is made…"></textarea>
+           <div class="points-row">
+             <input type="number" id="ptsA" min="0" max="100" value="0"/>
+             <span class="pts-label">Points Awarded</span>
+           </div>
+         </div>
+
+         <div class="option-block b">
+           <span class="option-flag">B</span>
+           <label class="field-label" for="optB">Option Text</label>
+           <input type="text" id="optB" placeholder="The player's choice wording…"/>
+           <label class="field-label" for="impactB">Consequence / Impact</label>
+           <textarea id="impactB" placeholder="What happens after this choice is made…"></textarea>
+           <div class="points-row">
+             <input type="number" id="ptsB" min="0" max="100" value="0"/>
+             <span class="pts-label">Points Awarded</span>
+           </div>
+         </div>
+
+         <div class="option-block c">
+           <span class="option-flag">C</span>
+           <label class="field-label" for="optC">Option Text</label>
+           <input type="text" id="optC" placeholder="The player's choice wording…"/>
+           <label class="field-label" for="impactC">Consequence / Impact</label>
+           <textarea id="impactC" placeholder="What happens after this choice is made…"></textarea>
+           <div class="points-row">
+             <input type="number" id="ptsC" min="0" max="100" value="0"/>
+             <span class="pts-label">Points Awarded</span>
+           </div>
+         </div>
+
+         <div class="option-block d">
+           <span class="option-flag">D</span>
+           <label class="field-label" for="optD">Option Text</label>
+           <input type="text" id="optD" placeholder="The player's choice wording…"/>
+           <label class="field-label" for="impactD">Consequence / Impact</label>
+           <textarea id="impactD" placeholder="What happens after this choice is made…"></textarea>
+           <div class="points-row">
+             <input type="number" id="ptsD" min="0" max="100" value="0"/>
+             <span class="pts-label">Points Awarded</span>
+           </div>
+         </div>
+
+       </div>
+
+       <button class="submit-btn" id="publish-btn" onclick="submitScenario()">
+         <span id="publish-btn-text">Publish Briefing</span>
+       </button>
+       <button class="clear-btn" onclick="clearForm()">Clear All Fields</button>
+
+     </div><!-- END left col -->
+
+     <div class="col-divider"></div>
+
+     <!-- RIGHT: Sidebar -->
+     <div>
+       <span class="section-label">Archive Status</span>
+       <div style="height:14px;"></div>
+       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#c8c0b0;border:1px solid #c8c0b0;margin-bottom:20px;">
+         <div style="background:var(--paper);padding:14px;">
+           <span class="count-badge" id="total-count">—</span>
+           <span class="count-label">Total Briefings</span>
+         </div>
+         <div style="background:var(--paper);padding:14px;">
+           <span class="count-badge" id="cat-count">—</span>
+           <span class="count-label">Categories Active</span>
+         </div>
+       </div>
+
+       <div class="sidebar-box">
+         <div class="sidebar-box-title">Writing Guidelines</div>
+         <div class="guide-row">
+           <div class="guide-num">1</div>
+           <div class="guide-text"><strong>Situation briefs</strong> should establish the actors, stakes, constraints, and immediate trigger in 2-4 focused sentences.</div>
+         </div>
+         <div class="guide-row">
+           <div class="guide-num">2</div>
+           <div class="guide-text"><strong>The decision prompt</strong> should give the player a role and one clear problem to solve.</div>
+         </div>
+         <div class="guide-row">
+           <div class="guide-num">3</div>
+           <div class="guide-text"><strong>Options A-D</strong> should represent genuinely different strategies, not four versions of the same move.</div>
+         </div>
+         <div class="guide-row">
+           <div class="guide-num">4</div>
+           <div class="guide-text"><strong>Consequences</strong> should explain cause and effect. Avoid vague praise or punishment.</div>
+         </div>
+         <div class="guide-row" style="margin-bottom:0;">
+           <div class="guide-num">5</div>
+           <div class="guide-text"><strong>Point values</strong> stay hidden until submission. Assign them for strategic quality, not narrative preference.</div>
+         </div>
+       </div>
+
+       <div class="sidebar-box" style="border-top-color: var(--accent);">
+         <div class="sidebar-box-title">Scene Artwork</div>
+         <div class="guide-row">
+           <div class="guide-num" style="font-size:14px;">1</div>
+           <div class="guide-text">Fill in the <strong>Title</strong> and <strong>Situation Brief</strong> first; these shape the visual direction.</div>
+         </div>
+         <div class="guide-row">
+           <div class="guide-num" style="font-size:14px;">2</div>
+           <div class="guide-text">Click <strong>Generate Scene Image</strong> to render a briefing illustration from the title and context.</div>
+         </div>
+         <div class="guide-row">
+           <div class="guide-num" style="font-size:14px;">3</div>
+           <div class="guide-text">Preview appears below the briefing. Hit <strong>Regenerate</strong> for a fresh take.</div>
+         </div>
+         <div class="guide-row" style="margin-bottom:0;">
+           <div class="guide-num" style="font-size:14px;">4</div>
+           <div class="guide-text">The image URL is <strong>saved automatically</strong> when you publish. Players will see it with the briefing.</div>
+         </div>
+       </div>
+
+       <div class="sidebar-box">
+         <div class="sidebar-box-title">Points Scale Reference</div>
+         <table class="pts-scale">
+           <tr><td>75-100</td><td>Strong: achieves the objective while limiting damage.</td></tr>
+           <tr><td>40-74</td><td>Mixed: defensible but costly, incomplete, or risky.</td></tr>
+           <tr><td>10-39</td><td>Weak: worsens leverage or misses the central constraint.</td></tr>
+           <tr><td>0-9</td><td>Damaging: creates avoidable instability or failure.</td></tr>
+         </table>
+       </div>
+
+       <div class="sidebar-box">
+         <div class="sidebar-box-title">Briefings by Theatre</div>
+         <div id="cat-breakdown">
+           <div style="font-size:12px;font-style:italic;color:var(--ink-muted);font-family:'Libre Baskerville',serif;">Loading archive…</div>
+         </div>
+       </div>
+
+       <!-- Image status panel -->
+       <div class="sidebar-box" style="border-top-color:var(--accent);">
+         <div class="sidebar-box-title">Image Status</div>
+         <div id="image-status-wrap">
+           <div style="font-size:12px;font-style:italic;color:var(--ink-muted);">Loading…</div>
+         </div>
+         <button onclick="checkImageStatus()" style="margin-top:10px;width:100%;padding:8px;font-family:'Libre Baskerville',serif;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:var(--paper-alt);border:1px solid #c8c0b0;cursor:pointer;color:var(--ink);">↻ Refresh Status</button>
+       </div>
+
+       <!-- Scenario preview -->
+       <div class="sidebar-box" id="scenario-preview-box" style="display:none;border-top-color:#2a5c1a;">
+         <div class="sidebar-box-title">Live Preview</div>
+         <div id="preview-category" style="font-size:9.5px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:6px;"></div>
+         <div id="preview-title" style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--ink);margin-bottom:8px;line-height:1.2;"></div>
+         <div id="preview-desc" style="font-size:11.5px;font-family:'Libre Baskerville',serif;color:var(--ink-muted);line-height:1.6;margin-bottom:10px;border-left:3px solid #c8c0b0;padding-left:8px;"></div>
+         <div id="preview-question" style="font-size:12px;font-style:italic;font-family:'Libre Baskerville',serif;color:var(--ink);margin-bottom:8px;"></div>
+         <div id="preview-options" style="font-size:11.5px;font-family:'Libre Baskerville',serif;color:var(--ink-muted);"></div>
+       </div>
+
+     </div>
+
+   </div><!-- .admin-layout -->
+
+   <div class="footer">
+   <span>© DiplomacySim Scenario Desk</span>
+     <span>
+       <a href="index.html">Front Page</a> &nbsp;·&nbsp;
+       <a href="leaderboard.html">Leaderboard</a> &nbsp;·&nbsp;
+       <a href="forum.html">Forum</a> &nbsp;·&nbsp;
+       <a href="#" onclick="doSignOut();return false;">Sign Out</a>
+     </span>
+     <span>Restricted — Authorised Staff Only</span>
+   </div>
+
+ </div><!-- #main-content -->
+
+</div><!-- .page -->
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<!-- Firebase Storage not used — images stored on Cloudinary, URL only in Firestore -->
+<script>
+ // ── Date ──────────────────────────────────────────────────
+ document.getElementById('topbar-date').textContent =
+   new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+ // ── Firebase init ──────────────────────────────────────────
+ const firebaseConfig = {
+   apiKey: "AIzaSyC_-1B2F9A8tXoPDlmJT4Gf2XPVNcRr94s",
+   authDomain: "diplomacysim-110de.firebaseapp.com",
+   projectId: "diplomacysim-110de",
+   storageBucket: "diplomacysim-110de.firebasestorage.app",
+   messagingSenderId: "29829728460",
+   appId: "1:29829728460:web:7c15e8bc421e2dd56dda69"
+ };
+ firebase.initializeApp(firebaseConfig);
+ const auth = firebase.auth();
+ const db   = firebase.firestore();
+
+ // ── Config (loaded from Firestore /config/admin — nothing sensitive in source) ──
+ let CLOUDINARY_CLOUD_NAME    = '';
+ let CLOUDINARY_UPLOAD_PRESET = '';
+ let PEXELS_API_KEY           = '';
+ let ADMIN_EMAILS             = [];
+
+ async function loadAdminConfig() {
+   try {
+     const snap = await db.collection('config').doc('admin').get();
+     if (!snap.exists) {
+       showConfigError('Firestore config doc not found. Paste the setup snippet into the console to create /config/admin.');
+       return false;
+     }
+     const d = snap.data();
+     ADMIN_EMAILS             = d.adminEmails     || [];
+     CLOUDINARY_CLOUD_NAME    = d.cloudinaryCloud  || '';
+     CLOUDINARY_UPLOAD_PRESET = d.cloudinaryPreset || '';
+     PEXELS_API_KEY           = d.pexelsKey        || '';
+     return true;
+   } catch (e) {
+     showConfigError('Could not load config from Firestore: ' + e.message + '. Firestore quota may be exhausted — try again after midnight.');
+     return false;
+   }
+ }
+
+ function showConfigError(msg) {
+   var el = document.getElementById('access-denied');
+   el.innerHTML = '<div style="font-family:\'Playfair Display\',serif;font-size:40px;font-weight:900;color:var(--ink-muted);">⚠️</div>'
+     + '<div style="font-family:\'Playfair Display\',serif;font-size:22px;font-weight:700;color:var(--ink);margin:12px 0 8px;">Config Not Loaded</div>'
+     + '<div style="font-family:\'Libre Baskerville\',serif;font-size:13px;color:var(--ink-muted);max-width:480px;margin:0 auto 24px;line-height:1.7;">' + msg + '</div>'
+     + '<a href="index.html" style="font-family:\'Libre Baskerville\',serif;font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--paper);background:var(--ink);padding:11px 28px;text-decoration:none;">Return to Front Page</a>';
+   el.style.display = 'block';
+ }
+
+ const CATEGORY_KEYWORDS = {
+   'Historical Events':           'history war archive diplomacy vintage',
+   'Current Affairs':             'politics government summit protest news',
+   'Fictional Scenarios':         'futuristic dramatic cinematic conflict',
+   'Economic Strategy':           'finance economy trade global market',
+   'Global Diplomacy':            'diplomacy summit leaders united nations',
+   'Intelligence & Espionage':    'surveillance secret spy shadows security',
+   'Nuclear Brinkmanship':        'nuclear military tension weapons defense',
+   'Environmental Crises':        'climate disaster flood fire environment',
+   'Humanitarian & Human Rights': 'refugee crisis humanitarian aid people',
+   'Cyber Warfare':               'cybersecurity digital technology hacker'
+ };
+
+ const STOP_WORDS = new Set(['the','a','an','of','in','on','at','to','for','is','are','was','were','and','or','but','with','from','by','as','it','its','this','that','these','those','be','been','have','has','had','do','does','did','will','would','could','should','may','might','not','no','each','every','all','any','more','most','other','such','than','then','very','just','about']);
+
+ function buildPexelsQuery(title, category) {
+   const catKeys   = CATEGORY_KEYWORDS[category] || 'politics diplomacy world';
+   const titleKeys = title.toLowerCase().replace(/[^a-z\s]/g,'').split(/\s+/).filter(w => w.length > 3 && !STOP_WORDS.has(w)).slice(0,3).join(' ');
+   return (titleKeys + ' ' + catKeys).trim().slice(0, 100);
+ }
+
+ async function fetchPexelsPhoto(title, category) {
+   const query = buildPexelsQuery(title, category);
+   const res = await fetch('https://api.pexels.com/v1/search?query=' + encodeURIComponent(query) + '&per_page=5&orientation=landscape', {
+     headers: { Authorization: PEXELS_API_KEY }
+   });
+   if (!res.ok) throw new Error('Pexels HTTP ' + res.status);
+   const data = await res.json();
+   if (!data.photos || !data.photos.length) throw new Error('No results for: ' + query);
+   return data.photos[0].src.large2x || data.photos[0].src.large;
+ }
+
+ async function uploadToCloudinary(blob, filename) {
+   const form = new FormData();
+   form.append('file', blob, filename);
+   form.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+   form.append('folder', 'diplomacysim');
+   form.append('quality', 'auto');   // Cloudinary auto-optimises
+   form.append('fetch_format', 'auto'); // serves WebP to browsers that support it
+
+   const res = await fetch(
+     'https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD_NAME + '/image/upload',
+     { method: 'POST', body: form }
+   );
+   if (!res.ok) {
+     const err = await res.json().catch(() => ({}));
+     throw new Error('Cloudinary upload failed: ' + (err.error?.message || res.status));
+   }
+   const data = await res.json();
+   return data.secure_url; // permanent CDN URL — this is what gets saved to Firestore
+ }
+
+ // ── Holds the current generated image URL ─────────────────
+ let generatedImageUrl = null;
+
+ function escapeHTML(value) {
+   return String(value == null ? '' : value).replace(/[&<>"']/g, function(ch) {
+     return ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[ch];
+   });
+ }
+
+ // ── Auth state ─────────────────────────────────────────────
+ auth.onAuthStateChanged(function(user) {
+   if (user) {
+     document.getElementById('topbar-signin-link').style.display = 'none';
+     document.getElementById('user-pill').style.display = 'flex';
+     document.getElementById('user-display-name').textContent = user.displayName || user.email;
+     var navLink = document.getElementById('nav-auth-link');
+     navLink.textContent = 'Sign Out';
+     navLink.href = '#';
+     navLink.classList.add('signout');
+     navLink.onclick = function(e) { e.preventDefault(); doSignOut(); };
+
+     // Load config from Firestore, then check admin status
+     loadAdminConfig().then(function(ok) {
+       if (ok && ADMIN_EMAILS.includes(user.email)) {
+         document.getElementById('admin-user-display').textContent = 'Signed in: ' + user.email;
+         document.getElementById('main-content').style.display = 'block';
+         loadStats();
+       } else if (ok) {
+         // Config loaded but this email isn't an admin
+         document.getElementById('access-denied').style.display = 'block';
+       }
+       // else: showConfigError() already called inside loadAdminConfig
+     });
+   } else {
+     document.getElementById('access-denied').style.display = 'block';
+   }
+ });
+
+ // ── Sign out ───────────────────────────────────────────────
+ function doSignOut() {
+   auth.signOut().then(function() { window.location.href = 'login.html'; });
+ }
+
+ // ── Load Firestore stats ───────────────────────────────────
+ function loadStats() {
+   db.collection('scenarios').get().then(function(snap) {
+     const cats = {};
+     snap.forEach(function(doc) {
+       const c = doc.data().category || 'Uncategorised';
+       cats[c] = (cats[c] || 0) + 1;
+     });
+     document.getElementById('total-count').textContent = snap.size;
+     document.getElementById('cat-count').textContent   = Object.keys(cats).length;
+     renderCatBreakdown(cats);
+   }).catch(function(err) { console.warn('Stats load failed:', err); });
+ }
+
+ function renderCatBreakdown(cats) {
+   const box = document.getElementById('cat-breakdown');
+   const vals = Object.values(cats);
+   const max  = vals.length ? Math.max(...vals) : 1;
+   box.innerHTML = '';
+   if (!vals.length) {
+     box.innerHTML = '<div style="font-size:12px;font-style:italic;color:var(--ink-muted);font-family:\'Libre Baskerville\',serif;">No briefings published yet.</div>';
+     return;
+   }
+   Object.entries(cats).forEach(function([cat, count]) {
+     const pct = Math.round((count / max) * 100);
+     box.innerHTML += `
+       <div style="margin-bottom:12px;">
+         <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+           <span style="font-family:'Libre Baskerville',serif;font-size:11.5px;color:var(--ink-light);">${escapeHTML(cat)}</span>
+           <span style="font-family:'Playfair Display',serif;font-weight:700;font-size:13px;color:var(--ink);">${count}</span>
+         </div>
+         <div style="height:3px;background:#d8d0c0;">
+           <div style="height:3px;background:var(--ink);width:${pct}%;transition:width 0.4s;"></div>
+         </div>
+       </div>`;
+   });
+ }
+
+ // ─────────────────────────────────────────────────────────────
+ // ── IMAGE GENERATION ─────────────────────────────────────────
+ // ─────────────────────────────────────────────────────────────
+
+ // Builds a rich image prompt purely from the form fields — no external API needed
+ function buildImagePrompt(title, description, category) {
+
+   // Extract the core concept from description — first meaningful sentence, cleaned up
+   const firstSentence = description
+     .replace(/^Background Briefing[:\s]*/i, '')
+     .split(/[.!?\n]/)
+     .map(s => s.trim())
+     .find(s => s.length > 20) || title;
+   const concept = firstSentence.slice(0, 150);
+
+   // Extract the most visually descriptive sentence from the full description
+   // (not just first sentence — find the one richest in concrete nouns)
+   const allSentences = description
+     .replace(/^Background Briefing[:\s]*/i, '')
+     .split(/[.!?\n]/)
+     .map(s => s.trim())
+     .filter(s => s.length > 25);
+
+   // Score sentences by count of visual/concrete keywords
+   const visualKeywords = ['people','workers','families','city','street','market','food','energy','war','troops','soldiers','protest','building','factory','trade','border','hospital','school','bank','farm','flood','fire','summit','rally','ships','planes','tanks','refugees','queue','crisis','collapse','surge','rising','falling','inflation','poverty','wealth'];
+   function scoreVisual(s) {
+     const lower = s.toLowerCase();
+     return visualKeywords.reduce((n, k) => n + (lower.includes(k) ? 1 : 0), 0);
+   }
+   const bestSentence = allSentences.sort((a,b) => scoreVisual(b) - scoreVisual(a))[0] || concept;
+   const visualConcept = bestSentence.slice(0, 160);
+
+   const styles = {
+
+     'Historical Events': {
+       aesthetic: 'vintage black and white press photograph, severe grain, blown-out highlights, mid-20th century photojournalism, aged newsprint scan, faded silver gelatin print',
+       mood: 'solemn, monumental, archival gravitas',
+       color: 'strictly monochrome, no colour whatsoever'
+     },
+
+     'Current Affairs': {
+       aesthetic: 'sharp modern photojournalism, full colour, high dynamic range, Reuters or AP wire photo aesthetic, harsh flash or overcast daylight, shallow depth of field',
+       mood: 'urgent, tense, immediate, documentary',
+       color: 'vivid natural colour, realistic'
+     },
+
+     'Fictional Scenarios': {
+       aesthetic: 'cinematic concept art, painterly realism, dramatic chiaroscuro lighting, epic wide shot, sci-fi or speculative near-future atmosphere',
+       mood: 'ominous, speculative, cinematic tension',
+       color: 'desaturated colour palette with bold accent tones — teal, amber, steel blue'
+     },
+
+     'Economic Strategy': {
+       aesthetic: 'sleek editorial photography, muted corporate palette, The Economist or Financial Times cover aesthetic, clean geometric composition',
+       mood: 'analytical, cold, global scale',
+       color: 'cool grey and blue tones, minimal warm accents'
+     },
+
+     'Global Diplomacy': {
+       aesthetic: 'formal diplomatic photography, wide-angle establishing shot, official press conference or treaty signing aesthetic, soft institutional lighting',
+       mood: 'grave, ceremonial, high-stakes',
+       color: 'rich natural colour, formal and composed'
+     }
+   };
+
+   const s = styles[category] || {
+     aesthetic: 'dramatic editorial photography, high contrast, award-winning photojournalism',
+     mood: 'tense, significant',
+     color: 'natural colour, cinematic grading'
+   };
+
+   // The subject is now driven entirely by the title + most visual sentence from the briefing
+   return `${s.aesthetic}, scene depicting: ${title} — ${visualConcept}, mood: ${s.mood}, ${s.color}, no text overlays, no logos, no named faces, wide establishing shot, 16:9 composition`;
+ }
+
+ async function generateScenarioImage() {
+   const title       = document.getElementById('scenario-title').value.trim();
+   const description = document.getElementById('scenario-description').value.trim();
+   const category    = document.getElementById('scenario-category').value.trim();
+
+   if (!title && !description) {
+     showToast('error', 'Missing Content', 'Please fill in the Scenario Title and Background Briefing before generating an image.');
+     return;
+   }
+
+   const btn = document.getElementById('gen-img-btn');
+   btn.disabled = true;
+   btn.innerHTML = '<span class="spinner-dark"></span>Generating image…';
+
+   // Show preview panel with skeleton
+   const wrap = document.getElementById('img-preview-wrap');
+   wrap.style.display = 'block';
+   document.getElementById('img-skeleton').style.display = 'block';
+   document.getElementById('scenario-image-preview').style.display = 'none';
+   document.getElementById('img-prompt-note').textContent = '';
+   generatedImageUrl = null;
+
+   try {
+     // ── Step 1: Fetch from Pexels ─────────────────────────────
+     btn.innerHTML = '<span class="spinner-dark"></span>Step 1/2 — Searching Pexels…';
+     document.getElementById('img-prompt-note').textContent = 'Step 1/2 — Finding best matching photo…';
+
+     const photoUrl = await fetchPexelsPhoto(title, category);
+     const response = await fetch(photoUrl);
+     if (!response.ok) throw new Error('Photo download failed: ' + response.status);
+     const blob = await response.blob();
+
+     // ── Step 2: Upload to Cloudinary ─────────────────────────
+     btn.innerHTML = '<span class="spinner-dark"></span>Step 2/2 — Uploading to CDN…';
+     document.getElementById('img-prompt-note').textContent = 'Step 2/2 — Uploading to Cloudinary CDN…';
+     const safeName = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 60) + '-' + Date.now() + '.jpg';
+     const permanentUrl = await uploadToCloudinary(blob, safeName);
+
+     // ── Step 3: Preview ───────────────────────────────────────
+     document.getElementById('img-prompt-note').textContent = '✓ Stored on Cloudinary CDN — loads in ~100ms. Photo from Pexels. URL saved to Firestore on publish.';
+     const previewEl = document.getElementById('scenario-image-preview');
+     previewEl.src = permanentUrl;
+     previewEl.style.display = 'block';
+     document.getElementById('img-skeleton').style.display = 'none';
+
+     generatedImageUrl = permanentUrl; // Cloudinary URL saved to Firestore on publish
+     btn.textContent = 'Generate Scene Image';
+     btn.disabled = false;
+
+   } catch (err) {
+     document.getElementById('img-skeleton').style.display = 'none';
+     document.getElementById('img-prompt-note').textContent = 'Issue: ' + err.message;
+     btn.textContent = 'Generate Scene Image';
+     btn.disabled = false;
+     console.error('Image gen error:', err);
+   }
+ }
+
+ // ─────────────────────────────────────────────────────────────
+ // ── SUBMIT SCENARIO ──────────────────────────────────────────
+ // ─────────────────────────────────────────────────────────────
+
+ function submitScenario() {
+   const category    = document.getElementById('scenario-category').value.trim();
+   const title       = document.getElementById('scenario-title').value.trim();
+   const description = document.getElementById('scenario-description').value.trim();
+   const question    = document.getElementById('scenario-question').value.trim();
+   const optA        = document.getElementById('optA').value.trim();
+   const optB        = document.getElementById('optB').value.trim();
+   const optC        = document.getElementById('optC').value.trim();
+   const optD        = document.getElementById('optD').value.trim();
+   const impactA     = document.getElementById('impactA').value.trim();
+   const impactB     = document.getElementById('impactB').value.trim();
+   const impactC     = document.getElementById('impactC').value.trim();
+   const impactD     = document.getElementById('impactD').value.trim();
+   const ptsA        = parseInt(document.getElementById('ptsA').value) || 0;
+   const ptsB        = parseInt(document.getElementById('ptsB').value) || 0;
+   const ptsC        = parseInt(document.getElementById('ptsC').value) || 0;
+   const ptsD        = parseInt(document.getElementById('ptsD').value) || 0;
+
+   if (!category || !title || !description || !question ||
+       !optA || !optB || !optC || !optD ||
+       !impactA || !impactB || !impactC || !impactD) {
+     showToast('error', 'Incomplete Filing', 'All fields must be completed before publishing.');
+     return;
+   }
+
+   const scenario = {
+     category, title, description, question,
+     optionA: optA, optionB: optB, optionC: optC, optionD: optD,
+     impactA, impactB, impactC, impactD,
+     pointsA: ptsA, pointsB: ptsB, pointsC: ptsC, pointsD: ptsD,
+     // ── Image URL (null if not generated) ──
+     imageUrl: generatedImageUrl || null,
+     createdAt: new Date().toISOString()
+   };
+
+   const btn = document.getElementById('publish-btn');
+   btn.disabled = true;
+   btn.textContent = _editingDocId ? 'Saving...' : 'Publishing...';
+
+   var writePromise = _editingDocId
+     ? db.collection('scenarios').doc(_editingDocId).update(scenario)
+     : db.collection('scenarios').add(scenario);
+
+   writePromise
+     .then(function(docRef) {
+       if (_editingDocId) {
+         showToast('success', 'Changes Saved', '"' + title + '" has been updated in the archive.');
+         cancelEdit();
+       } else {
+         const imgNote = generatedImageUrl ? ' Image illustration saved.' : ' No image attached.';
+         showToast('success', 'Dispatch Filed', '"' + title + '" published.' + imgNote);
+       }
+       clearForm();
+       loadStats();
+     })
+     .catch(function(err) {
+       showToast('error', _editingDocId ? 'Save Failed' : 'Publishing Failed', err.message);
+     })
+     .finally(function() {
+       btn.disabled = false;
+       btn.innerHTML = '<span id="publish-btn-text">' + (_editingDocId ? 'Save Changes' : 'Publish Briefing') + '</span>';
+     });
+ }
+
+ // ── Clear form ─────────────────────────────────────────────
+ function clearForm() {
+   ['scenario-category','scenario-title','scenario-description','scenario-question',
+    'optA','optB','optC','optD','impactA','impactB','impactC','impactD'].forEach(function(id) {
+     document.getElementById(id).value = '';
+   });
+   ['ptsA','ptsB','ptsC','ptsD'].forEach(function(id) {
+     document.getElementById(id).value = '0';
+   });
+   // Reset image state
+   generatedImageUrl = null;
+   document.getElementById('img-preview-wrap').style.display = 'none';
+   document.getElementById('scenario-image-preview').removeAttribute('src');
+   document.getElementById('img-prompt-note').textContent = '';
+   document.getElementById('toast').style.display = 'none';
+ }
+
+ // ── Toast ──────────────────────────────────────────────────
+ function showToast(type, head, msg) {
+   const t = document.getElementById('toast');
+   t.className = type === 'error' ? 'error' : '';
+   document.getElementById('toast-head').textContent = head;
+   document.getElementById('toast-msg').textContent  = msg;
+   t.style.display = 'block';
+   t.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+ }
+
+ // ── Image status panel ────────────────────────────────────
+ function checkImageStatus() {
+   var wrap = document.getElementById('image-status-wrap');
+   wrap.innerHTML = '<div style="font-size:12px;font-style:italic;color:var(--ink-muted);">Scanning…</div>';
+   db.collection('scenarios').get().then(function(snap) {
+     var total   = snap.size;
+     var noImage = snap.docs.filter(function(d){ var v = d.data().imageUrl; return !v || v === null || v === ''; }).length;
+     var hasImage = total - noImage;
+     var pct = total ? Math.round(hasImage / total * 100) : 0;
+     wrap.innerHTML =
+       '<div style="display:flex;justify-content:space-between;margin-bottom:6px;">'
+         + '<span style="font-size:12px;font-family:\'Libre Baskerville\',serif;color:var(--ink);">'+hasImage+' / '+total+' have images</span>'
+         + '<span style="font-family:\'Playfair Display\',serif;font-size:14px;font-weight:700;color:var(--ink);">'+pct+'%</span>'
+       + '</div>'
+       + '<div style="height:6px;background:#d8d0c0;border-radius:2px;">'
+         + '<div style="height:6px;background:'+(pct===100?'#2a5c1a':'var(--accent)')+';width:'+pct+'%;transition:width 0.5s;border-radius:2px;"></div>'
+       + '</div>'
+       + (noImage > 0
+         ? '<div style="margin-top:8px;font-size:11px;font-style:italic;color:var(--accent);font-family:\'Libre Baskerville\',serif;">'+noImage+' scenario'+(noImage!==1?'s':'')+' missing images — run generate-scenario-images.js</div>'
+         : '<div style="margin-top:8px;font-size:11px;color:#2a5c1a;font-family:\'Libre Baskerville\',serif;">✓ All scenarios have images</div>'
+       );
+   }).catch(function(e) {
+     wrap.innerHTML = '<div style="color:var(--accent);font-size:12px;">Error: ' + e.message + '</div>';
+   });
+ }
+
+ // ── Live scenario preview ─────────────────────────────────
+ // Call this whenever form fields change
+ function updatePreview() {
+   var title    = (document.getElementById('scenario-title')       || {}).value || '';
+   var desc     = (document.getElementById('scenario-description') || {}).value || '';
+   var question = (document.getElementById('scenario-question')    || {}).value || '';
+   var cat      = (document.getElementById('scenario-category')    || {}).value || '';
+   var optA     = (document.getElementById('optA')                 || {}).value || '';
+   var optB     = (document.getElementById('optB')                 || {}).value || '';
+   var optC     = (document.getElementById('optC')                 || {}).value || '';
+   var optD     = (document.getElementById('optD')                 || {}).value || '';
+
+   if (!title && !desc) { document.getElementById('scenario-preview-box').style.display = 'none'; return; }
+   document.getElementById('scenario-preview-box').style.display = 'block';
+   document.getElementById('preview-category').textContent = cat;
+   document.getElementById('preview-title').textContent    = title || '—';
+   document.getElementById('preview-desc').textContent     = desc  || '—';
+   document.getElementById('preview-question').textContent = question || '—';
+   var opts = [['A',optA],['B',optB],['C',optC],['D',optD]].filter(function(o){ return o[1]; });
+   document.getElementById('preview-options').innerHTML = opts.map(function(o) {
+     return '<div style="margin-bottom:5px;"><strong>'+o[0]+'.</strong> '+escapeHTML(o[1])+'</div>';
+   }).join('');
+ }
+
+ // ── Admin tab switching ───────────────────────────────────
+ var _editingDocId = null;
+
+ function switchAdminTab(tab) {
+   var surface = document.querySelector('.admin-layout');
+   var run = function() {
+     var tabs   = ['new','edit','import'];
+     var active = tab;
+     tabs.forEach(function(t) {
+       var btn = document.getElementById('tab-' + t);
+       if (!btn) return;
+       btn.style.background = t === active ? 'var(--ink)'   : 'var(--paper)';
+       btn.style.color      = t === active ? 'var(--paper)' : 'var(--ink-muted)';
+       btn.setAttribute('aria-selected', t === active ? 'true' : 'false');
+     });
+     document.getElementById('edit-tab').style.display       = tab === 'edit'   ? 'block' : 'none';
+     document.getElementById('new-tab-header').style.display = tab === 'new'    ? 'block' : 'none';
+     document.getElementById('import-tab').style.display     = tab === 'import' ? 'block' : 'none';
+     var showForm = tab !== 'import';
+     document.querySelectorAll('.form-group, .options-grid, hr.thick, .section-label, #publish-btn, .clear-btn')
+       .forEach(function(el){ el.style.display = showForm ? '' : 'none'; });
+   };
+   if (window.DSUI && DSUI.swapSection) DSUI.swapSection(surface, run);
+   else run();
+ }
+
+ // ── Batch import logic ────────────────────────────────────
+ var _importScenarios = [];
+
+ function handleImportDrop(e) {
+   e.preventDefault();
+   document.getElementById('import-dropzone').style.borderColor = '#c8c0b0';
+   document.getElementById('import-dropzone').style.background  = 'var(--cream)';
+   var file = e.dataTransfer.files[0];
+   if (file) parseImportFile(file);
+ }
+
+ function handleImportFile(e) {
+   var file = e.target.files[0];
+   if (file) parseImportFile(file);
+   e.target.value = '';
+ }
+
+ function parseImportFile(file) {
+   if (!file.name.endsWith('.json')) {
+     showToast('error', 'Wrong File Type', 'Please upload a .json file.');
+     return;
+   }
+   var reader = new FileReader();
+   reader.onload = function(e) {
+     try {
+       var data = JSON.parse(e.target.result);
+       if (!Array.isArray(data)) {
+         data = [data]; // allow single object too
+       }
+       validateAndPreviewImport(data);
+     } catch(err) {
+       showToast('error', 'Invalid JSON', 'Could not parse file: ' + err.message);
+     }
+   };
+   reader.readAsText(file);
+ }
+
+ var REQUIRED_FIELDS = ['category','title','description','question',
+   'optionA','optionB','optionC','optionD',
+   'impactA','impactB','impactC','impactD'];
+
+ function validateAndPreviewImport(scenarios) {
+   _importScenarios = [];
+   var errors = [];
+
+   scenarios.forEach(function(s, i) {
+     var missing = REQUIRED_FIELDS.filter(function(f){ return !s[f]; });
+     if (missing.length) {
+       errors.push('Scenario #' + (i+1) + ' missing: ' + missing.join(', '));
+     } else {
+       _importScenarios.push(s);
+     }
+   });
+
+   var preview = document.getElementById('import-preview');
+   var list    = document.getElementById('import-scenario-list');
+   var errBox  = document.getElementById('import-errors');
+   preview.style.display = 'block';
+   document.getElementById('import-count').textContent = _importScenarios.length;
+
+   list.innerHTML = _importScenarios.map(function(s, i) {
+     return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid #e8e2d6;">'
+       + '<div><span style="font-weight:700;color:var(--ink);">' + escapeHTML(s.title) + '</span>'
+       + '<span style="color:var(--ink-muted);margin-left:8px;font-size:11px;">' + escapeHTML(s.category) + '</span></div>'
+       + '<span style="font-size:10px;color:#2a6b1a;font-weight:700;">✓</span></div>';
+   }).join('') || '<div style="padding:12px;font-style:italic;color:var(--ink-muted);">No valid scenarios found.</div>';
+
+   if (errors.length) {
+     errBox.style.display = 'block';
+     errBox.innerHTML = '<strong>' + errors.length + ' validation error(s):</strong><br>' + errors.join('<br>');
+   } else {
+     errBox.style.display = 'none';
+   }
+
+   var btn = document.getElementById('import-btn');
+   if (_importScenarios.length > 0) {
+     btn.disabled = false;
+     btn.style.opacity = '1';
+     document.getElementById('import-btn-text').textContent =
+       'Upload ' + _importScenarios.length + ' Scenario' + (_importScenarios.length !== 1 ? 's' : '') + ' to Firebase';
+   } else {
+     btn.disabled = true;
+     btn.style.opacity = '0.5';
+     document.getElementById('import-btn-text').textContent = 'Upload Scenarios to Firebase';
+   }
+ }
+
+ async function runBatchImport() {
+   if (!_importScenarios.length) return;
+   var btn = document.getElementById('import-btn');
+   btn.disabled = true;
+
+   var done = 0, fail = 0;
+   for (var i = 0; i < _importScenarios.length; i++) {
+     var s = _importScenarios[i];
+     document.getElementById('import-btn-text').textContent =
+       'Uploading ' + (i+1) + ' / ' + _importScenarios.length + '…';
+     try {
+       var payload = {
+         category:    s.category,
+         title:       s.title,
+         description: s.description,
+         question:    s.question,
+         optionA: s.optionA, optionB: s.optionB, optionC: s.optionC, optionD: s.optionD,
+         impactA: s.impactA, impactB: s.impactB, impactC: s.impactC, impactD: s.impactD,
+         pointsA: parseInt(s.pointsA) || 0,
+         pointsB: parseInt(s.pointsB) || 0,
+         pointsC: parseInt(s.pointsC) || 0,
+         pointsD: parseInt(s.pointsD) || 0,
+         imageUrl:  s.imageUrl  || null,
+         createdAt: new Date().toISOString()
+       };
+       await db.collection('scenarios').add(payload);
+       done++;
+     } catch(err) {
+       fail++;
+       console.error('Failed to import "' + s.title + '":', err.message);
+     }
+   }
+
+   btn.disabled = false;
+   document.getElementById('import-btn-text').textContent = 'Upload Scenarios to Firebase';
+   loadStats();
+
+   if (fail === 0) {
+     showToast('success', 'Import Complete', done + ' scenario' + (done !== 1 ? 's' : '') + ' uploaded successfully.');
+     clearImport();
+   } else {
+     showToast('error', 'Partial Import', done + ' uploaded, ' + fail + ' failed. Check console for details.');
+   }
+ }
+
+ function clearImport() {
+   _importScenarios = [];
+   document.getElementById('import-preview').style.display = 'none';
+   document.getElementById('import-btn').disabled = true;
+   document.getElementById('import-btn').style.opacity = '0.5';
+   document.getElementById('import-btn-text').textContent = 'Upload Scenarios to Firebase';
+ }
+
+ function searchScenarios() {
+   var q    = (document.getElementById('edit-search-input').value || '').trim().toLowerCase();
+   var box  = document.getElementById('edit-search-results');
+   if (!q) { box.innerHTML = '<div style="font-size:12px;font-style:italic;color:var(--ink-muted);">Enter a search term.</div>'; return; }
+   box.innerHTML = '<div style="font-size:12px;font-style:italic;color:var(--ink-muted);">Searching…</div>';
+   db.collection('scenarios').get().then(function(snap) {
+     var matches = snap.docs.filter(function(d){ return (d.data().title||'').toLowerCase().includes(q); }).slice(0,8);
+     if (!matches.length) { box.innerHTML = '<div style="font-size:12px;font-style:italic;color:var(--ink-muted);">No scenarios found.</div>'; return; }
+     box.innerHTML = matches.map(function(d) {
+       return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-bottom:1px solid #d8d0c0;cursor:pointer;" onmouseover="this.style.background=\'var(--paper-alt)\'" onmouseout="this.style.background=\'\'" onclick="loadScenarioForEdit(\'' + d.id + '\',this)">'
+         + '<div><div style="font-size:13px;font-family:\'Libre Baskerville\',serif;color:var(--ink);">' + escapeHTML(d.data().title) + '</div>'
+         + '<div style="font-size:10.5px;color:var(--ink-muted);">' + escapeHTML(d.data().category) + '</div></div>'
+         + '<span style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);">Load →</span>'
+         + '</div>';
+     }).join('');
+   }).catch(function(e){ box.innerHTML = '<div style="color:var(--accent);font-size:12px;">'+e.message+'</div>'; });
+ }
+
+ function loadScenarioForEdit(docId, el) {
+   db.collection('scenarios').doc(docId).get().then(function(doc) {
+     if (!doc.exists) return;
+     var d = doc.data();
+     _editingDocId = docId;
+     // Populate form
+     document.getElementById('scenario-title').value       = d.title       || '';
+     document.getElementById('scenario-description').value = d.description || '';
+     document.getElementById('scenario-question').value    = d.question    || '';
+     document.getElementById('scenario-category').value    = d.category    || '';
+     document.getElementById('optA').value = d.optionA || ''; document.getElementById('optB').value = d.optionB || '';
+     document.getElementById('optC').value = d.optionC || ''; document.getElementById('optD').value = d.optionD || '';
+     document.getElementById('impactA').value = d.impactA || ''; document.getElementById('impactB').value = d.impactB || '';
+     document.getElementById('impactC').value = d.impactC || ''; document.getElementById('impactD').value = d.impactD || '';
+     document.getElementById('ptsA').value = d.pointsA || ''; document.getElementById('ptsB').value = d.pointsB || '';
+     document.getElementById('ptsC').value = d.pointsC || ''; document.getElementById('ptsD').value = d.pointsD || '';
+     document.getElementById('edit-mode-title').textContent  = d.title || 'Untitled';
+     document.getElementById('edit-mode-banner').style.display = 'block';
+     document.getElementById('publish-btn-text').textContent   = 'Save Changes';
+     document.getElementById('edit-search-results').innerHTML  = '';
+     updatePreview();
+   });
+ }
+
+ function cancelEdit() {
+   _editingDocId = null;
+   document.getElementById('edit-mode-banner').style.display = 'none';
+   document.getElementById('publish-btn-text').textContent   = 'Publish Briefing';
+ }
+
+ // Attach preview listeners after DOM is ready
+ document.addEventListener('DOMContentLoaded', function() {
+   ['scenario-title','scenario-description','scenario-question','scenario-category','optA','optB','optC','optD']
+     .forEach(function(id) {
+       var el = document.getElementById(id);
+       if (el) el.addEventListener('input', updatePreview);
+     });
+   checkImageStatus();
+ });
+</script>
+</body>
+</html>

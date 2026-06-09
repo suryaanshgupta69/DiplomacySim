@@ -1,0 +1,1886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DiplomacySim · Results</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:image" content="https://res.cloudinary.com/djkzjki1t/image/upload/w_1200,h_630,c_fill,g_center/diplomacysim_og.jpg"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:image" content="https://res.cloudinary.com/djkzjki1t/image/upload/w_1200,h_630,c_fill,g_center/diplomacysim_og.jpg"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=UnifrakturMaguntia&family=IM+Fell+English:ital@0;1&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:       #1a1713;
+      --ink-light: #3d3a34;
+      --ink-muted: #6a6460;
+      --rule:      #1a1713;
+      --paper:     #f5f0e8;
+      --paper-alt: #ede8db;
+      --cream:     #faf7f2;
+      --accent:    #8b1a1a;
+      --success:   #2a6b1a;
+    }
+
+    body {
+      background-color: var(--cream);
+      color: var(--ink);
+      font-family: 'Libre Baskerville', Georgia, serif;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 32px 64px;
+      background: var(--paper);
+      box-shadow: 0 0 60px rgba(0,0,0,0.12);
+      border-left: 1px solid #c8c0b0;
+      border-right: 1px solid #c8c0b0;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--rule);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: var(--ink-muted);
+    }
+    .topbar a { color: var(--ink-muted); text-decoration: none; }
+    .topbar a:hover { color: var(--accent); }
+    .topbar-center { display: flex; gap: 18px; }
+
+    /* ── Masthead ── */
+    .masthead {
+      text-align: center;
+      padding: 28px 0 18px;
+      border-bottom: 3px double var(--rule);
+    }
+    .masthead-eyebrow {
+      font-size: 10.5px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 10px;
+    }
+    .masthead-title {
+      font-family: 'UnifrakturMaguntia', cursive;
+      font-size: clamp(52px, 8vw, 90px);
+      line-height: 1;
+      color: var(--ink);
+    }
+    .masthead-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 14px 0 10px;
+    }
+    .masthead-rule::before,
+    .masthead-rule::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--rule);
+    }
+    .masthead-rule-diamond {
+      width: 6px; height: 6px;
+      background: var(--ink);
+      transform: rotate(45deg);
+      flex-shrink: 0;
+    }
+    .masthead-tagline {
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      font-size: 15px;
+      color: var(--ink-light);
+    }
+    .masthead-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      color: var(--ink-muted);
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid var(--rule);
+    }
+
+    /* ── Nav ── */
+    .nav-strip {
+      display: flex;
+      justify-content: center;
+      border-bottom: 3px solid var(--rule);
+    }
+    .nav-strip a {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+      padding: 9px 18px;
+      border-right: 1px solid var(--rule);
+      transition: background 0.15s, color 0.15s;
+    }
+    .nav-strip a:first-child { border-left: 1px solid var(--rule); }
+    .nav-strip a:hover  { background: var(--ink); color: var(--paper); }
+    .nav-strip a.active { background: var(--ink); color: var(--paper); }
+    #nav-auth-link.signout { color: var(--paper); background: var(--accent); border-color: var(--accent); }
+    #nav-auth-link.signout:hover { background: #6a0f0f; }
+
+    /* ── Section label ── */
+    .section-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--paper);
+      background: var(--ink);
+      display: inline-block;
+      padding: 3px 10px;
+    }
+    .section-label.red     { background: var(--accent); }
+    .section-label.success { background: var(--success); }
+
+    /* ── Status bar ── */
+    .status-bar {
+      background: var(--ink);
+      color: var(--paper);
+      padding: 10px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+    }
+    .status-bar strong {
+      font-family: 'Playfair Display', serif;
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .status-label {
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      opacity: 0.55;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    /* ── Verdict banner ── */
+    .verdict-banner {
+      border-top: 6px solid var(--ink);
+      border-bottom: 3px solid var(--ink);
+      padding: 22px 0 18px;
+      margin: 24px 0 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .verdict-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        -45deg, transparent, transparent 8px,
+        rgba(26,23,19,0.025) 8px, rgba(26,23,19,0.025) 9px
+      );
+      pointer-events: none;
+    }
+    .verdict-eyebrow {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 10px;
+    }
+    .verdict-grade {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(64px, 10vw, 110px);
+      font-weight: 900;
+      line-height: 1;
+      color: var(--ink);
+      display: block;
+    }
+    .verdict-label {
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      font-size: 22px;
+      color: var(--ink-light);
+      margin-top: 6px;
+      display: block;
+    }
+    .verdict-pts {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-top: 14px;
+      background: var(--ink);
+      color: var(--paper);
+      padding: 8px 24px;
+    }
+    .verdict-pts-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      font-weight: 900;
+      line-height: 1;
+    }
+    .verdict-pts-label {
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+
+    /* ── Layout ── */
+    .result-layout {
+      display: grid;
+      grid-template-columns: 1.7fr 2px 1fr;
+      gap: 0;
+      padding: 28px 0;
+    }
+    .col-divider {
+      background: #c8c0b0;
+      width: 1px;
+      margin: 0 28px;
+    }
+
+    /* ── Typography ── */
+    .headline-xl {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(24px, 3.5vw, 38px);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+    .byline {
+      font-size: 11px;
+      font-style: italic;
+      color: var(--ink-muted);
+      letter-spacing: 0.04em;
+      margin-bottom: 12px;
+    }
+    .body-text {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 13.5px;
+      line-height: 1.78;
+      color: var(--ink-light);
+    }
+    .body-text + .body-text { margin-top: 10px; }
+
+    /* ── Directive filed ── */
+    .directive-filed {
+      border: 1px solid #c8c0b0;
+      border-left: 4px solid var(--ink);
+      background: var(--cream);
+      padding: 16px 18px;
+      margin: 20px 0;
+      overflow: hidden;
+    }
+    .directive-filed-label {
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 8px;
+      display: block;
+    }
+    .directive-filed-letter {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--ink);
+      line-height: 1;
+      float: left;
+      margin: 2px 10px 0 0;
+    }
+    .directive-filed-text {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 13.5px;
+      line-height: 1.65;
+      color: var(--ink);
+      font-style: italic;
+    }
+
+    /* ── Consequence block ── */
+    .consequence-block {
+      border-top: 3px double var(--rule);
+      border-bottom: 1px solid var(--rule);
+      padding: 18px 0;
+      margin: 22px 0;
+      clear: both;
+    }
+    .consequence-label {
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 10px;
+      display: block;
+    }
+    /* Fix #6: line-height increased from 1.55 → 1.7 for long-form readability */
+    .consequence-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 17px;
+      font-style: italic;
+      line-height: 1.7;
+      color: var(--ink);
+    }
+
+    /* ── All options revealed ── */
+    .all-options-title {
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 12px;
+      display: block;
+    }
+    .reveal-card {
+      border: 1px solid #c8c0b0;
+      border-left: 4px solid #c8c0b0;
+      background: var(--paper);
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      display: grid;
+      grid-template-columns: 28px 1fr auto;
+      gap: 10px;
+      align-items: start;
+    }
+    .reveal-card.was-chosen {
+      border-left-color: var(--ink);
+      background: var(--cream);
+    }
+    .reveal-card.is-best  { border-left-color: var(--success); }
+    .reveal-card.is-worst { border-left-color: var(--accent); }
+
+    .reveal-letter {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 900;
+      line-height: 1.1;
+      color: var(--ink-muted);
+    }
+    .reveal-card.was-chosen .reveal-letter { color: var(--ink); }
+
+    .reveal-option-text {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 12.5px;
+      color: var(--ink-light);
+      line-height: 1.55;
+      margin-bottom: 5px;
+    }
+    .reveal-impact-text {
+      font-size: 11.5px;
+      font-style: italic;
+      color: var(--ink-muted);
+      line-height: 1.55;
+      font-family: 'Libre Baskerville', serif;
+    }
+    .reveal-pts {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--ink-muted);
+      white-space: nowrap;
+      text-align: right;
+    }
+    .reveal-card.was-chosen .reveal-pts { color: var(--ink); }
+    .reveal-card.is-best    .reveal-pts { color: var(--success); }
+    .reveal-card.is-worst   .reveal-pts { color: var(--accent); }
+
+    .reveal-tag {
+      font-size: 8.5px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      display: inline-block;
+      margin-top: 4px;
+    }
+    .tag-chosen { background: var(--ink);       color: var(--paper); }
+    .tag-best   { background: var(--success);   color: var(--paper); }
+    .tag-missed { background: var(--paper-alt); color: var(--ink-muted); border: 1px solid #c8c0b0; }
+
+    /* ── CTA buttons — Fix #11: aligned to .btn system ── */
+    .cta-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 24px;
+    }
+    .cta-btn {
+      display: block;
+      font-family: 'Libre Baskerville', serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--paper);
+      background: var(--ink);
+      border: 2px solid var(--ink);
+      padding: 12px 18px;
+      text-decoration: none;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    .cta-btn:hover { background: var(--accent); border-color: var(--accent); }
+    /* outline variant — now matches .btn-outline in style.css */
+    .cta-btn.outline { background: transparent; color: var(--ink); border-color: #c8c0b0; }
+    .cta-btn.outline:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+    .others-row { display:flex;align-items:center;gap:10px;margin-bottom:8px; }
+    .others-letter { font-family:'Playfair Display',serif;font-size:16px;font-weight:900;color:var(--ink);width:16px;flex-shrink:0; }
+    .others-bar-wrap { flex:1;height:14px;background:var(--paper-alt);position:relative;overflow:hidden; }
+    .others-bar-fill { height:100%;background:var(--ink);transition:width 0.6s ease; }
+    .others-bar-fill.is-chosen { background:var(--accent); }
+    .others-pct { font-size:11px;font-family:'Libre Baskerville',serif;color:var(--ink-muted);width:32px;text-align:right;flex-shrink:0; }
+
+    /* ── Sidebar ── */
+    .sidebar-box {
+      border: 1px solid #c8c0b0;
+      border-top: 3px solid var(--ink);
+      padding: 16px;
+      margin-bottom: 20px;
+      background: var(--cream);
+    }
+    .sidebar-box.success { border-top-color: var(--success); }
+    .sidebar-box.danger  { border-top-color: var(--accent); }
+
+    .sidebar-box-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #c8c0b0;
+    }
+
+    .score-display { text-align: center; padding: 10px 0 14px; }
+    .score-earned {
+      font-family: 'Playfair Display', serif;
+      font-size: 56px;
+      font-weight: 900;
+      line-height: 1;
+      display: block;
+    }
+    .score-earned.optimal  { color: var(--success); }
+    .score-earned.adequate { color: #5c4a1a; }
+    .score-earned.weak     { color: #c05020; }
+    .score-earned.poor     { color: var(--accent); }
+
+    .score-total-label {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-top: 4px;
+      display: block;
+    }
+    .score-divider { border: none; border-top: 1px solid #d8d0c0; margin: 12px 0; }
+    .score-running { display: flex; justify-content: space-between; align-items: baseline; }
+    .score-running-label {
+      font-size: 11px;
+      color: var(--ink-muted);
+      font-family: 'Libre Baskerville', serif;
+      font-style: italic;
+    }
+    .score-running-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .perf-bar-wrap { height: 4px; background: #d8d0c0; margin: 8px 0 4px; }
+    .perf-bar-fill { height: 4px; transition: width 0.6s ease; }
+    .perf-label {
+      font-size: 11px;
+      font-style: italic;
+      color: var(--ink-muted);
+      font-family: 'Libre Baskerville', serif;
+    }
+
+    .rank-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #d8d0c0;
+      font-family: 'Libre Baskerville', serif;
+      font-size: 12.5px;
+      color: var(--ink-light);
+    }
+    .rank-row:last-child { border-bottom: none; }
+    .rank-val {
+      font-family: 'Playfair Display', serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .missed-quote {
+      border-top: 3px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      padding: 14px 0;
+      margin: 0 0 20px;
+    }
+    .missed-quote p {
+      font-family: 'Playfair Display', serif;
+      font-size: 14px;
+      font-style: italic;
+      line-height: 1.5;
+      color: var(--ink);
+    }
+    .missed-quote cite {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      font-style: normal;
+      display: block;
+      margin-top: 6px;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      border-top: 3px double var(--rule);
+      padding: 18px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: var(--ink-muted);
+      margin-top: 24px;
+    }
+    .footer a { color: var(--ink-muted); text-decoration: none; }
+    .footer a:hover { color: var(--accent); }
+
+    hr.thin { border: none; border-top: 1px solid #c8c0b0; margin: 14px 0; }
+    .result-next-btn { display:block;text-align:center;margin-top:0; }
+    .result-next-btn:hover { background:var(--accent) !important; border-color:var(--accent) !important; }
+    .result-change-theatre { display:block;font-family:'Libre Baskerville',serif;font-size:11px;color:var(--ink-muted);text-decoration:none;font-style:italic;margin-top:10px;text-align:center;transition:color 0.15s; }
+    .result-change-theatre:hover { color:var(--accent); }
+
+    /* ── Print styles ── */
+    @media print {
+      body { background: #fff; font-size: 12pt; }
+      .page { box-shadow: none; border: none; padding: 0; max-width: 100%; }
+      .topbar, .nav-strip, .status-bar, .cta-row, #how-others-wrap,
+      #related-scenarios-wrap, #rating-block, .mobile-bottom-nav,
+      #back-to-top, #auto-advance-bar, #auto-advance-msg,
+      .missed-block, #challenge-link-wrap { display: none !important; }
+      .result-layout { display: block !important; }
+      .col-divider { display: none; }
+      .verdict-banner { border: 2px solid #000; page-break-inside: avoid; }
+      .reveal-card { page-break-inside: avoid; }
+      a[href]::after { content: none; }
+    }
+
+    /* ── Score breakdown ── */
+    .score-breakdown { margin-top:12px; }
+    .score-breakdown-row { display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #e8e0d0;font-family:'Libre Baskerville',serif;font-size:12px;color:var(--ink-light); }
+    .score-breakdown-row:last-child { border-bottom:none; }
+    .score-breakdown-val { font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--ink); }
+    .score-breakdown-val.red { color:var(--accent); }
+    .score-breakdown-val.green { color:var(--success); }
+
+    /* ── Diplomatic rank ── */
+    .dipl-rank-badge { text-align:center;padding:10px 0 4px;border-top:1px solid #d8d0c0;margin-top:10px; }
+    .dipl-rank-title { font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-muted);display:block;margin-bottom:4px; }
+    .dipl-rank-val { font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--ink); }
+
+    /* ── Personal best ── */
+    .personal-best-note { font-size:11px;font-style:italic;color:var(--success);font-family:'Libre Baskerville',serif;margin-top:6px;text-align:center; }
+
+    /* ── Related scenarios ── */
+    .related-card { border:1px solid #c8c0b0;border-left:3px solid var(--ink-muted);background:var(--paper);padding:12px 14px;margin-bottom:8px;cursor:pointer;text-decoration:none;color:inherit;display:block;transition:background 0.15s,border-left-color 0.15s; }
+    .related-card:hover { background:var(--cream);border-left-color:var(--accent); }
+    .related-card-cat { font-size:8.5px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:4px; }
+    .related-card-title { font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--ink);line-height:1.25; }
+
+    /* ── Auto-advance ── */
+    #auto-advance-bar { height:3px;background:#d8d0c0;margin-top:8px;overflow:hidden;display:none; }
+    #auto-advance-fill { height:100%;background:var(--ink);width:100%;transition:width 10s linear; }
+    #auto-advance-msg { font-size:11px;font-style:italic;color:var(--ink-muted);font-family:'Libre Baskerville',serif;margin-top:4px;text-align:center;display:none; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .verdict-banner { animation: fadeUp 0.45s ease both; }
+    .result-layout  { animation: fadeUp 0.45s ease 0.12s both; }
+  </style>
+  <link rel="stylesheet" href="style.css?v=20260609pro">
+  <script src="transitions.js?v=20260609pro" defer></script>
+  <script src="sounds.js?v=20260609pro" defer></script>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1a1713">
+</head>
+<body>
+<div class="page">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <span>Established MMXXIV &nbsp;·&nbsp; Consequence Report</span>
+    <div class="topbar-center">
+      <a href="index.html">Front Page</a>
+      <span>·</span>
+      <a href="categories.html">Theatres</a>
+      <span>·</span>
+      <a href="leaderboard.html">Rankings</a>
+    </div>
+    <span id="topbar-date"></span>
+  </div>
+
+  <!-- Masthead -->
+  <div class="masthead">
+    <div class="masthead-eyebrow" id="masthead-eyebrow">Consequence Report &nbsp;·&nbsp; Directive Filed</div>
+    <h1 class="masthead-title" style="font-family:'UnifrakturMaguntia',cursive;font-size:clamp(52px,8vw,90px);line-height:1;color:var(--ink);">DiplomacySim</h1>
+    <div class="masthead-rule">
+      <div class="masthead-rule-diamond"></div>
+      <div class="masthead-rule-diamond"></div>
+      <div class="masthead-rule-diamond"></div>
+    </div>
+    <div class="masthead-tagline" id="masthead-tagline">"The decision is filed. Now study what it changed."</div>
+    <div class="masthead-meta">
+      <span id="masthead-meta-left">Consequence Report · Decision Review</span>
+      <span id="masthead-meta-right"></span>
+    </div>
+  </div>
+
+  <!-- Nav -->
+  <nav class="nav-strip">
+    <a href="index.html">Home</a>
+    <a href="categories.html" class="active">Play Now</a>
+    <a href="leaderboard.html">Leaderboard</a>
+    <a href="forum.html">Forum</a>
+    <a href="profile.html">Profile</a>
+    <a href="login.html" id="nav-auth-link" style="display:none;">Sign In</a>
+    <a href="admin.html" id="admin-link" style="display:none;">Admin</a>
+  </nav>
+<script src="js/ds-config.js"></script>
+<script src="nav-init.js"></script>
+
+  <!-- Status bar -->
+  <div class="status-bar">
+    <div>
+      <span class="status-label">Player</span>
+      <strong id="player-name">Guest</strong>
+    </div>
+    <div style="text-align:center;">
+      <span class="status-label">Directive Filed</span>
+      <strong id="status-option">—</strong>
+    </div>
+    <div style="text-align:right;">
+      <span class="status-label">Points This Round</span>
+      <strong id="status-pts">—</strong>
+    </div>
+  </div>
+
+  <!-- Verdict banner -->
+  <div class="verdict-banner" id="verdict-banner">
+    <div class="verdict-eyebrow">Strategic Assessment — Directive <span id="verdict-letter">—</span></div>
+    <span class="verdict-grade" id="verdict-grade">—</span>
+    <span class="verdict-label" id="verdict-label">Analysing outcome…</span>
+    <div class="verdict-pts">
+      <span class="verdict-pts-num" id="verdict-pts-num">0</span>
+      <span class="verdict-pts-label">Points Awarded</span>
+    </div>
+  </div>
+
+  <!-- Main layout -->
+  <div class="result-layout">
+
+    <!-- LEFT -->
+    <div>
+      <span class="section-label" id="result-section-label">Consequence Report</span>
+      <div style="height:16px;"></div>
+
+      <!-- Fix #7: explicit heading role for screen readers -->
+      <h2 class="headline-xl" id="result-scenario-title" style="font-family:'Playfair Display',serif;font-size:clamp(24px,3.5vw,38px);font-weight:700;line-height:1.1;color:var(--ink);margin-bottom:10px;">Scenario Debrief</h2>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
+        <div class="byline" id="result-byline" style="margin-bottom:0;">Briefing Desk · Consequence Review</div>
+        <span id="result-difficulty-tag" style="display:none;font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--paper);padding:3px 9px;"></span>
+      </div>
+      <hr class="thin">
+
+      <!-- Directive filed -->
+      <div class="directive-filed">
+        <span class="directive-filed-label">Directive Issued &nbsp;·&nbsp; Option <span id="filed-letter-label">—</span></span>
+        <span class="directive-filed-letter" id="filed-letter-big">—</span>
+        <div class="directive-filed-text" id="filed-option-text">—</div>
+      </div>
+
+      <!-- Consequence — Fix #17: pull-quote style for editorial weight -->
+      <div class="consequence-block">
+        <span class="consequence-label">What Happened</span>
+        <blockquote class="consequence-text pull-quote" id="consequence-text">—</blockquote>
+      </div>
+
+      <!-- Expert take -->
+      <div class="consequence-block" id="expert-take-block" style="display:none;border-top-color:#5c3a1a;">
+        <span class="consequence-label" style="background:#5c3a1a;">Analyst's Assessment</span>
+        <div class="consequence-text" id="expert-take-text" style="font-style:italic;">—</div>
+      </div>
+
+      <p class="body-text">
+        The outcome above shows the immediate effect of your directive. Some choices buy time, some restore leverage, and some create costs that only become obvious after the room has moved on.
+      </p>
+      <p class="body-text" style="margin-top:12px;">
+        Below, every option is revealed with its score and consequence. Use the comparison to understand the trade-off, not just the grade.
+      </p>
+
+      <!-- All options -->
+      <div style="margin-top:24px;">
+        <span class="all-options-title">All Directives Revealed</span>
+        <div id="all-options-container"></div>
+      </div>
+
+      <div class="cta-row">
+        <a id="play-next-btn" href="categories.html" class="cta-btn" onclick="playNext(event)" style="position:relative;">Play Next in Theatre <span id="play-next-spinner" style="display:none;">…</span></a>
+        <a href="categories.html" class="cta-btn outline">All Theatres</a>
+      </div>
+
+      <!-- How others played -->
+      <div id="how-others-wrap" style="margin-top:22px;display:none;">
+        <span class="all-options-title">How Others Played</span>
+        <div id="how-others-bars" style="margin-top:10px;"></div>
+        <div id="avg-score-line" style="margin-top:10px;font-size:12px;font-family:'Libre Baskerville',serif;color:var(--ink-muted);font-style:italic;padding:8px 12px;background:var(--paper-alt);border-left:3px solid #c8c0b0;"></div>
+      </div>
+
+      <!-- Share + Challenge row -->
+      <!-- Fix #11: use unified .btn system -->
+      <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <button onclick="shareResult()" class="btn btn-ghost" style="flex:1;">Copy Result</button>
+        <button onclick="challengeFriend()" class="btn btn-ghost" style="flex:1;">Challenge a Friend</button>
+      </div>
+      <button onclick="reportScenario()" class="btn btn-outline" style="font-size:10px;letter-spacing:0.1em;color:var(--ink-muted);margin-top:6px;" title="Flag this scenario for review">⚑ Flag</button>
+      <div id="share-copied-msg" style="display:none;margin-top:8px;font-size:11px;font-style:italic;color:var(--ink-muted);font-family:'Libre Baskerville',serif;">Copied to clipboard. Paste it anywhere.</div>
+
+      <!-- Real outcome reveal (Historical Events only) -->
+      <div id="real-outcome-block" style="display:none;margin-top:22px;border-top:3px solid var(--rule);border-bottom:1px solid #c8c0b0;padding:18px 0;">
+        <span style="font-size:9.5px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--ink-muted);display:block;margin-bottom:10px;">What Actually Happened</span>
+        <div id="real-outcome-text" style="font-family:'Playfair Display',serif;font-size:15px;font-style:italic;line-height:1.6;color:var(--ink);"></div>
+        <div style="margin-top:8px;font-size:10.5px;color:var(--ink-muted);font-family:'Libre Baskerville',serif;font-style:italic;">— Historical record · Archival Intelligence Desk</div>
+      </div>
+
+      <!-- Scenario rating -->
+      <div id="rating-block" style="margin-top:22px;border:1px solid #c8c0b0;border-top:3px solid var(--ink);padding:16px;background:var(--cream);">
+        <div style="font-size:9.5px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:10px;">Rate This Scenario</div>
+        <div id="star-row" style="display:flex;gap:6px;margin-bottom:10px;">
+          <button class="star-btn" type="button" data-val="1" onclick="submitRating(1)" aria-label="Rate 1 star" style="font-size:28px;cursor:pointer;color:#c8c0b0;transition:color 0.15s;">★</button>
+          <button class="star-btn" type="button" data-val="2" onclick="submitRating(2)" aria-label="Rate 2 stars" style="font-size:28px;cursor:pointer;color:#c8c0b0;transition:color 0.15s;">★</button>
+          <button class="star-btn" type="button" data-val="3" onclick="submitRating(3)" aria-label="Rate 3 stars" style="font-size:28px;cursor:pointer;color:#c8c0b0;transition:color 0.15s;">★</button>
+          <button class="star-btn" type="button" data-val="4" onclick="submitRating(4)" aria-label="Rate 4 stars" style="font-size:28px;cursor:pointer;color:#c8c0b0;transition:color 0.15s;">★</button>
+          <button class="star-btn" type="button" data-val="5" onclick="submitRating(5)" aria-label="Rate 5 stars" style="font-size:28px;cursor:pointer;color:#c8c0b0;transition:color 0.15s;">★</button>
+        </div>
+        <div id="rating-avg" style="font-size:11px;font-style:italic;color:var(--ink-muted);font-family:'Libre Baskerville',serif;"></div>
+        <div id="rating-msg" style="display:none;font-size:11px;color:var(--ink);font-family:'Libre Baskerville',serif;margin-top:6px;"></div>
+      </div>
+      <!-- Auto-advance -->
+      <div id="auto-advance-bar"><div id="auto-advance-fill"></div></div>
+      <div id="auto-advance-msg"></div>
+
+      <!-- Related scenarios -->
+      <div id="related-scenarios-wrap" style="margin-top:22px;display:none;">
+        <span class="all-options-title">More in This Theatre</span>
+        <div id="related-scenarios-list" style="margin-top:10px;"></div>
+      </div>
+
+      <div id="challenge-link-wrap" style="display:none;margin-top:10px;">
+        <div style="font-size:10.5px;color:var(--ink-muted);font-family:'Libre Baskerville',serif;margin-bottom:5px;">Share this link — your friend gets the same scenario:</div>
+        <div style="display:flex;gap:6px;">
+          <input id="challenge-link-input" readonly style="flex:1;padding:7px 10px;border:1px solid #c8c0b0;background:var(--cream);font-size:11px;font-family:monospace;color:var(--ink);" value="">
+          <button onclick="copyChallengeLink()" style="padding:7px 12px;background:var(--ink);color:var(--paper);border:none;font-size:10px;cursor:pointer;font-family:'Libre Baskerville',serif;font-weight:700;letter-spacing:0.1em;">COPY</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-divider"></div>
+
+    <!-- RIGHT -->
+    <div>
+
+      <!-- Score box -->
+      <div class="sidebar-box" id="score-box">
+        <div class="sidebar-box-title">Round Score</div>
+        <div class="score-display">
+          <span class="score-earned" id="score-earned-display">0</span>
+          <span class="score-total-label">Points Awarded This Round</span>
+        </div>
+        <div class="perf-bar-wrap">
+          <div class="perf-bar-fill" id="perf-bar" style="width:0%;"></div>
+        </div>
+        <div class="perf-label" id="perf-label">—</div>
+        <div id="personal-best-note" class="personal-best-note" style="display:none;">★ New personal best on this scenario!</div>
+        <hr class="score-divider">
+        <!-- Score breakdown -->
+        <div class="score-breakdown" id="score-breakdown" style="display:none;">
+          <div style="font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:6px;">Score Breakdown</div>
+          <div class="score-breakdown-row"><span>Base Score</span><span class="score-breakdown-val" id="bd-base">—</span></div>
+          <div class="score-breakdown-row"><span>Time Multiplier</span><span class="score-breakdown-val green" id="bd-mult">—</span></div>
+          <div class="score-breakdown-row" id="bd-hint-row" style="display:none;"><span>Hint Penalty</span><span class="score-breakdown-val red" id="bd-hint">—15 pts</span></div>
+          <div class="score-breakdown-row" style="border-top:2px solid #c8c0b0;margin-top:4px;padding-top:6px;"><span style="font-weight:700;">Total</span><span class="score-breakdown-val" id="bd-total">—</span></div>
+        </div>
+        <hr class="score-divider">
+        <div class="score-running">
+          <span class="score-running-label">Running total</span>
+          <span class="score-running-num" id="running-total">—</span>
+        </div>
+        <!-- Diplomatic rank -->
+        <div class="dipl-rank-badge" id="dipl-rank-badge" style="display:none;">
+          <span class="dipl-rank-title">Diplomatic Rank</span>
+          <span class="dipl-rank-val" id="dipl-rank-val">—</span>
+        </div>
+      </div>
+
+      <!-- Leaderboard update -->
+      <div class="sidebar-box">
+        <div class="sidebar-box-title">Leaderboard Update</div>
+        <div class="rank-row">
+          <span>Current Rank</span>
+          <span class="rank-val" id="rank-current">—</span>
+        </div>
+        <div class="rank-row">
+          <span>Points This Round</span>
+          <span class="rank-val" id="rank-pts-round">—</span>
+        </div>
+        <div class="rank-row">
+          <span>Total Points</span>
+          <span class="rank-val" id="rank-pts-total">—</span>
+        </div>
+        <div class="rank-row">
+          <a href="leaderboard.html" style="font-size:11px;font-family:'Libre Baskerville',serif;color:var(--accent);text-decoration:none;font-style:italic;">
+            View full rankings →
+          </a>
+        </div>
+      </div>
+
+      <!-- Best option -->
+      <div class="sidebar-box">
+        <div class="sidebar-box-title">Optimal Directive</div>
+        <div id="best-option-content"></div>
+      </div>
+
+      <!-- Missed quote -->
+      <div id="missed-block" style="display:none;">
+        <div class="missed-quote">
+          <p id="missed-quote-text"></p>
+          <cite>— Review Note</cite>
+        </div>
+      </div>
+
+      <!-- Next scenario -->
+      <a href="categories.html" class="btn btn-dark result-next-btn">Next Briefing</a>
+      <a href="categories.html" class="result-change-theatre">← Change Theatre</a>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span>© DiplomacySim Educational Platform</span>
+    <span>
+      <a href="index.html">Front Page</a> &nbsp;·&nbsp;
+      <a href="categories.html">Theatres</a> &nbsp;·&nbsp;
+      <a href="leaderboard.html">Leaderboard</a> &nbsp;·&nbsp;
+      <a href="forum.html">Forum</a>
+    </span>
+    <span>All scenarios for educational use only</span>
+  </div>
+
+<!-- Theatre completion modal -->
+<div id="theatre-complete-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(26,23,19,0.82);display:none;align-items:center;justify-content:center;">
+  <div style="background:var(--paper);max-width:420px;width:90%;padding:36px 32px;text-align:center;border-top:4px solid var(--accent);box-shadow:0 20px 60px rgba(0,0,0,0.4);position:relative;">
+    <div style="font-size:48px;margin-bottom:12px;">🏅</div>
+    <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:900;color:var(--ink);margin-bottom:8px;">Theatre Complete!</div>
+    <div id="theatre-complete-name" style="font-size:11px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--paper);background:var(--ink);display:inline-block;padding:3px 12px;margin-bottom:16px;"></div>
+    <p style="font-family:'IM Fell English',serif;font-style:italic;font-size:14px;color:var(--ink-light);line-height:1.65;margin-bottom:20px;">You have completed all scenarios in this theatre. An outstanding diplomatic performance — your record stands.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <a href="categories.html" style="font-family:'Libre Baskerville',serif;font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--paper);background:var(--ink);border:2px solid var(--ink);padding:10px 20px;text-decoration:none;transition:background 0.15s;" onmouseover="this.style.background='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.background='var(--ink)';this.style.borderColor='var(--ink)'">Next Theatre</a>
+      <button onclick="document.getElementById('theatre-complete-modal').style.display='none'" style="font-family:'Libre Baskerville',serif;font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-muted);background:none;border:2px solid #c8c0b0;padding:10px 20px;cursor:pointer;">Stay Here</button>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+<script>
+
+  // ── Date ──────────────────────────────────────────────────
+  const d = new Date();
+  const dateStr = d.toLocaleDateString('en-GB', {
+    weekday:'long', year:'numeric', month:'long', day:'numeric'
+  });
+  document.getElementById('topbar-date').textContent         = dateStr;
+  document.getElementById('masthead-meta-right').textContent = dateStr;
+// ── Firebase init ──────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyC_-1B2F9A8tXoPDlmJT4Gf2XPVNcRr94s",
+  authDomain: "diplomacysim-110de.firebaseapp.com",
+  projectId: "diplomacysim-110de",
+  storageBucket: "diplomacysim-110de.firebasestorage.app",
+  messagingSenderId: "29829728460",
+  appId: "1:29829728460:web:7c15e8bc421e2dd56dda69"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db   = firebase.firestore();
+
+  function escapeHTML(value) {
+    return String(value == null ? '' : value).replace(/[&<>"']/g, function(ch) {
+      return ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[ch];
+    });
+  }
+
+  // ── Auth ───────────────────────────────────────────────────
+  auth.onAuthStateChanged(function(user) {
+    if (user) {
+      
+      var navLink = document.getElementById('nav-auth-link');
+      if (navLink) { navLink.textContent = 'Sign Out'; navLink.href = '#'; navLink.classList.add('signout'); navLink.onclick = function(e){ e.preventDefault(); firebase.auth().signOut().then(function(){ window.location.href='login.html'; }); }; }
+
+      // Page-specific admin link
+      DS_CONFIG.load(db).then(function() {
+        var adminEl = document.getElementById('admin-link');
+        if (adminEl) adminEl.style.display = DS_CONFIG.isAdmin(user.email) ? 'inline-block' : 'none';
+      });
+
+      db.collection("users").doc(user.uid).get().then(doc => {
+        if (!doc.exists) return;
+        const data = doc.data();
+        const total = data.total_points || 0;
+        document.getElementById('player-name').textContent    = data.username || user.email;
+        document.getElementById('running-total').textContent  = total.toLocaleString();
+        document.getElementById('rank-pts-total').textContent = total.toLocaleString();
+        loadRank(total);
+        var rankEl = document.getElementById('dipl-rank-val');
+        if (rankEl) {
+          rankEl.textContent = getDiplomaticRank(total);
+          document.getElementById('dipl-rank-badge').style.display = 'block';
+        }
+
+        // ── Streak update ──────────────────────────────────
+        if (localStorage.getItem('lastResult')) {
+          var today = new Date().toLocaleDateString('en-CA');
+          var lastPlayed = data.last_played_date || '';
+          var yesterday = new Date(Date.now() - 86400000).toLocaleDateString('en-CA');
+          var newStreak = (lastPlayed === today) ? (data.streak_current || 1)
+                        : (lastPlayed === yesterday) ? (data.streak_current || 0) + 1
+                        : 1;
+          var bestStreak = Math.max(data.streak_best || 0, newStreak);
+          if (lastPlayed !== today) {
+            db.collection('users').doc(user.uid).set({
+              last_played_date: today,
+              streak_current: newStreak,
+              streak_best: bestStreak
+            }, { merge: true }).catch(function(){});
+          }
+        }
+
+        var scenId = result.scenarioId;
+        if (scenId) {
+          db.collection('responses').where('user_id','==',user.uid).where('scenario_id','==',scenId).get()
+            .then(function(snap) {
+              var maxPrev = 0;
+              snap.forEach(function(d){ if ((d.data().points_earned||0) > maxPrev) maxPrev = d.data().points_earned||0; });
+              var pts = result.pointsEarned || 0;
+              if (pts > 0 && pts >= maxPrev && snap.size <= 1) {
+                document.getElementById('personal-best-note').style.display = 'block';
+              }
+            }).catch(function(){});
+        }
+      });
+    } else {
+    }
+  });
+
+  function loadRank(myPoints) {
+    // Count only users with MORE points than me — much faster than fetching all users
+    db.collection("users").where("total_points", ">", myPoints).get().then(function(snap) {
+      var rank = snap.size + 1;
+      document.getElementById('rank-current').textContent = '#' + rank;
+    }).catch(function(err) {
+      console.warn('Rank load unavailable:', err);
+      document.getElementById('rank-current').textContent = '—';
+      document.getElementById('rank-current').title = 'Rankings temporarily unavailable';
+    });
+  }
+
+  // ── DEMO DATA (used when opened directly, no localStorage) ─
+  const DEMO_RESULT = {
+    scenarioTitle:  'The Fractured Alliance: A Summit on the Brink',
+    category:       'Global Diplomacy',
+    selectedOption: 'B',
+    optionText:     'Open the session publicly, issue a joint statement condemning escalatory rhetoric from both sides, and set a 24-hour deadline for a written proposal from each delegation.',
+    pointsEarned:   90,
+    impact:         'The public framing shifts the narrative from bilateral grievance to collective responsibility. Both states feel heard. The 24-hour deadline creates urgency without ultimatum. The session produces a joint framework within 18 hours.',
+  };
+
+  const DEMO_SCENARIO = {
+    optionA: 'Propose an immediate ceasefire on all public statements and convene a closed bilateral session.',
+    optionB: 'Open the session publicly, issue a joint statement, and set a 24-hour deadline for written proposals.',
+    optionC: 'Invoke emergency protocol to suspend both member states\' voting rights.',
+    optionD: 'Adjourn the summit for 72 hours and dispatch independent technical experts.',
+    pointsA: 75, pointsB: 90, pointsC: 20, pointsD: 45,
+    impactA: 'The closed session reduces posturing and allows genuine negotiation. Progress is slow but the alliance holds.',
+    impactB: 'The public framing builds collective responsibility. A joint framework emerges within 18 hours.',
+    impactC: 'Both states withdraw their delegations in protest. The alliance fractures further.',
+    impactD: 'The adjournment is read as indecision. Domestic hardliners gain ground. Positions harden.',
+  };
+
+  // ── Read localStorage — fall back silently to demo ─────────
+  // Fix #3: localStorage can throw in iOS Safari private mode — wrapped in outer try
+  // NO redirect. Page always renders.
+  let result   = DEMO_RESULT;
+  let scenData = DEMO_SCENARIO;
+
+  try {
+    const r = localStorage.getItem('lastResult');
+    const s = localStorage.getItem('currentScenario');
+    if (r) result   = JSON.parse(r);
+    if (s) scenData = JSON.parse(s);
+  } catch(e) {
+    // parsing failed or storage unavailable — demo data already set above
+  }
+
+  // ── Verdict helper ─────────────────────────────────────────
+  function getVerdict(pts) {
+    if (pts >= 75) return { grade:'A', label:'Optimal Strategic Decision',        cls:'optimal',  color:'#2a6b1a' };
+    if (pts >= 40) return { grade:'B', label:'Adequate — Notable Trade-offs',     cls:'adequate', color:'#8b6a20' };
+    if (pts >= 10) return { grade:'C', label:'Weak — Significant Cost Incurred',  cls:'weak',     color:'#c05020' };
+    return              { grade:'D', label:'Damaging — Destabilising Move',      cls:'poor',     color:'#8b1a1a' };
+  }
+
+  // ── Build page ─────────────────────────────────────────────
+  function buildPage() {
+    const pts     = result.pointsEarned || 0;
+    const opt     = result.selectedOption || '—';
+    const verdict = getVerdict(pts);
+
+    // Status bar
+    document.getElementById('status-option').textContent = result.selectedOption ? 'Option ' + opt : 'Timed out';
+    document.getElementById('status-pts').textContent    = '+' + pts + ' pts';
+
+    // Masthead
+    document.getElementById('masthead-eyebrow').textContent   = 'Consequence Report · ' + (result.category || '—');
+    document.getElementById('masthead-tagline').textContent   = '"' + (result.scenarioTitle || 'Scenario Debrief') + '"';
+    document.getElementById('masthead-meta-left').textContent =
+      (result.category || '—') + ' · ' + (result.selectedOption ? 'Directive ' + opt : 'No directive') + ' · ' + pts + ' pts awarded';
+
+    // Verdict banner
+    document.getElementById('verdict-letter').textContent  = opt;
+    document.getElementById('verdict-grade').textContent   = verdict.grade;
+    document.getElementById('verdict-label').textContent   = verdict.label;
+    countUp('verdict-pts-num', pts, 900);
+    countUp('score-earned-display', pts, 900, function() {
+      var el = document.getElementById('score-earned-display');
+      el.className = 'score-earned ' + verdict.cls;
+      el.classList.add('score-bounce');
+      setTimeout(function(){ el.classList.remove('score-bounce'); }, 500);
+      playScoreSound(verdict.cls);
+      if (pts >= 90) setTimeout(launchConfetti, 200);
+    });
+    const banner = document.getElementById('verdict-banner');
+    banner.style.borderTopColor    = verdict.color;
+    banner.style.borderBottomColor = verdict.color;
+
+    // Section label
+    const lbl = document.getElementById('result-section-label');
+    if      (verdict.cls === 'optimal') { lbl.className = 'section-label success'; lbl.textContent = 'Optimal Decision'; }
+    else if (verdict.cls === 'poor')    { lbl.className = 'section-label red';     lbl.textContent = 'Damaging Decision'; }
+    else                                { lbl.className = 'section-label';         lbl.textContent = 'Consequence Report'; }
+
+    // Smarter newspaper-style headline based on score
+    var headlines = {
+      optimal:  [
+        'Directive Holds — Analysts Praise Decision',
+        'Swift Action Stabilises Situation, Sources Say',
+        'Strategic Clarity: Optimal Course Charted'
+      ],
+      adequate: [
+        'Mixed Results as Directive Takes Effect',
+        'Cautious Move Buys Time, Critics Note Trade-offs',
+        'Decision Filed — Outcome Defensible, Not Decisive'
+      ],
+      weak: [
+        'Directive Leaves Opening for Opposing Forces',
+        'Analysts Question Timing of Filed Decision',
+        'Room for Error Left Open by Policy Choice'
+      ],
+      poor: [
+        'Decision Draws Immediate Criticism from Observers',
+        'Misstep Recorded — Leverage Lost, Advisers Warn',
+        'Filed Directive Seen as Costly Strategic Error'
+      ]
+    };
+    var hlines = headlines[verdict.cls] || headlines['adequate'];
+    var pick   = hlines[Math.floor(Math.random() * hlines.length)];
+    document.getElementById('result-scenario-title').textContent = pick;
+    document.getElementById('result-byline').textContent =
+      'Briefing Desk · ' + (result.category || '—') + ' · Directive ' + opt + ' Filed · ' + (result.scenarioTitle || '');
+
+    // Difficulty tag on result page
+    var diff = scenData.difficulty || '';
+    var diffTagEl = document.getElementById('result-difficulty-tag');
+    if (diffTagEl && diff) {
+      var diffColors = { 'Easy':'#2a5c1a', 'Medium':'#5c3a1a', 'Hard':'#8b1a1a' };
+      diffTagEl.textContent = diff;
+      diffTagEl.style.background = diffColors[diff] || 'var(--ink)';
+      diffTagEl.style.display = 'inline-block';
+    }
+
+    // Directive filed
+    document.getElementById('filed-letter-label').textContent = opt;
+    document.getElementById('filed-letter-big').textContent   = opt;
+    document.getElementById('filed-option-text').textContent  = result.optionText || '—';
+
+    // Consequence
+    document.getElementById('consequence-text').textContent = result.impact || '—';
+
+    // Expert take — generated from score tier + category
+    var expertTake = buildExpertTake(pts, result.category, opt, verdict.cls);
+    if (expertTake) {
+      document.getElementById('expert-take-text').textContent = expertTake;
+      document.getElementById('expert-take-block').style.display = 'block';
+    }
+
+    // Score sidebar
+    const scoreEl = document.getElementById('score-earned-display');
+    scoreEl.textContent = '0';
+    scoreEl.className   = 'score-earned';
+
+    const bar = document.getElementById('perf-bar');
+    bar.style.width      = Math.max(0, Math.min(100, pts)) + '%';
+    bar.style.background = verdict.color;
+    document.getElementById('perf-label').textContent     = verdict.label;
+    document.getElementById('rank-pts-round').textContent = '+' + pts;
+
+    if (verdict.cls === 'optimal') document.getElementById('score-box').className = 'sidebar-box success';
+    if (verdict.cls === 'poor')    document.getElementById('score-box').className = 'sidebar-box danger';
+
+    // Build comparison + best option
+    buildAllOptions(scenData, opt);
+    buildBestOption(scenData, opt);
+    // Load how others played (non-blocking)
+    loadHowOthersPlayed(result.scenarioId, opt, pts);
+    // Score breakdown
+    populateBreakdown(result.basePoints, result.timeBonus, result.hintUsed, pts);
+    // Related scenarios
+    loadRelatedScenarios(result.category, result.scenarioId);
+    // Check theatre completion (only for logged-in users)
+    if (localStorage.getItem('lastResult') && result.category) {
+      auth.onAuthStateChanged(function(u) {
+        if (u) checkTheatreCompletion(u.uid, result.category, result.scenarioId);
+      });
+    }
+    // Auto-advance (only if real game, not demo)
+    if (localStorage.getItem('lastResult')) {
+      setTimeout(function(){ startAutoAdvance(result.category); }, 1800);
+    }
+
+    // Missed quote
+    if (verdict.cls !== 'optimal') {
+      const allPts     = [scenData.pointsA, scenData.pointsB, scenData.pointsC, scenData.pointsD];
+      const maxPts     = Math.max(...allPts);
+      const bestLetter = ['A','B','C','D'][allPts.indexOf(maxPts)];
+      document.getElementById('missed-block').style.display  = 'block';
+      document.getElementById('missed-quote-text').textContent =
+        'Directive ' + bestLetter + ' held the strongest available position. ' +
+        'The best move usually protects leverage while leaving room to adapt.';
+    }
+  }
+
+  // ── All options comparison ─────────────────────────────────
+  function buildAllOptions(s, chosen) {
+    const letters = ['A','B','C','D'];
+    const texts   = [s.optionA, s.optionB, s.optionC, s.optionD];
+    const impacts = [s.impactA, s.impactB, s.impactC, s.impactD];
+    const pts     = [s.pointsA, s.pointsB, s.pointsC, s.pointsD];
+    const maxPts  = Math.max(...pts);
+    const minPts  = Math.min(...pts);
+    const order   = [0,1,2,3].sort((a,b) => pts[b] - pts[a]);
+    const box     = document.getElementById('all-options-container');
+    box.innerHTML = '';
+
+    const parts = [];
+    order.forEach(function(i) {
+      const letter   = letters[i];
+      const isChosen = letter === chosen;
+      const isBest   = pts[i] === maxPts;
+      const isWorst  = pts[i] === minPts && !isBest;
+
+      let cls = 'reveal-card';
+      if (isChosen) cls += ' was-chosen';
+      if (isBest)   cls += ' is-best';
+      if (isWorst)  cls += ' is-worst';
+
+      let tags = '';
+      if (isChosen)             tags += '<span class="reveal-tag tag-chosen">Your Choice</span> ';
+      if (isBest && !isChosen)  tags += '<span class="reveal-tag tag-best">Best Option</span> ';
+      if (!isChosen && !isBest) tags += '<span class="reveal-tag tag-missed">Not Chosen</span>';
+
+      parts.push(
+        '<div class="' + cls + '">'
+        + '<div class="reveal-letter">' + letter + '</div>'
+        + '<div>'
+          + '<div class="reveal-option-text">' + escapeHTML(texts[i] || '') + '</div>'
+          + '<div class="reveal-impact-text">' + escapeHTML(impacts[i] || '') + '</div>'
+          + '<div style="margin-top:5px;">' + tags + '</div>'
+        + '</div>'
+        + '<div>'
+          + '<div class="reveal-pts">' + pts[i] + '</div>'
+          + '<div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-muted);text-align:right;margin-top:2px;">pts</div>'
+        + '</div>'
+        + '</div>'
+      );
+    });
+    box.innerHTML = parts.join('');
+  }
+
+  // ── Best option box ────────────────────────────────────────
+  function buildBestOption(s, chosen) {
+    const pts        = [s.pointsA, s.pointsB, s.pointsC, s.pointsD];
+    const texts      = [s.optionA, s.optionB, s.optionC, s.optionD];
+    const maxPts     = Math.max(...pts);
+    const bestIdx    = pts.indexOf(maxPts);
+    const bestLetter = ['A','B','C','D'][bestIdx];
+    const isOptimal  = bestLetter === chosen;
+
+    document.getElementById('best-option-content').innerHTML = `
+      <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:10px;">
+        <span style="font-family:'Playfair Display',serif;font-size:32px;font-weight:900;
+              color:${isOptimal ? 'var(--success)' : 'var(--ink)'};">${bestLetter}</span>
+        <span style="font-family:'Libre Baskerville',serif;font-size:11px;
+              color:var(--ink-muted);font-style:italic;">
+          ${maxPts} pts — ${isOptimal ? 'You chose this' : 'You chose ' + chosen + ' instead'}
+        </span>
+      </div>
+      <div style="font-family:'Libre Baskerville',serif;font-size:12.5px;line-height:1.6;
+            color:var(--ink-light);font-style:italic;margin-bottom:8px;">${escapeHTML(texts[bestIdx])}</div>
+      ${isOptimal
+        ? `<div style="font-size:11px;color:var(--success);font-family:'Libre Baskerville',serif;
+               font-weight:700;">Optimal directive selected.</div>`
+        : `<div style="font-size:11.5px;font-style:italic;color:var(--ink-muted);
+               font-family:'Libre Baskerville',serif;line-height:1.55;">
+               This was the strongest available position. Study the full comparison before the next briefing.
+           </div>`
+      }`;
+  }
+
+  // ── Play Next in Theatre ──────────────────────────────────
+  function playNext(e) {
+    e.preventDefault();
+    var result = JSON.parse(localStorage.getItem('lastResult') || '{}');
+    var cat    = result.category || 'Global Diplomacy';
+    var btn    = document.getElementById('play-next-btn');
+    btn.style.opacity = '0.6';
+    document.getElementById('play-next-spinner').style.display = 'inline';
+    try { localStorage.setItem('selectedCategory', cat); } catch(e) {} // Fix #3
+    window.smoothSwap ? window.smoothSwap(function(){
+      window.location.href = 'scenario.html?category=' + encodeURIComponent(cat);
+    }) : (window.location.href = 'scenario.html?category=' + encodeURIComponent(cat));
+  }
+
+  // ── How Others Played + Score vs Average ─────────────────
+  function loadHowOthersPlayed(scenarioId, myOption, myPts) {
+    if (!scenarioId) return;
+    db.collection('responses').where('scenario_id', '==', scenarioId).get()
+      .then(function(snap) {
+        if (snap.empty) return;
+        var counts = { A:0, B:0, C:0, D:0 };
+        var totalPts = 0, totalPlays = 0;
+        snap.forEach(function(doc) {
+          var r = doc.data();
+          var opt = (r.selected_option || r.selectedOption || '').toUpperCase();
+          if (counts[opt] !== undefined) counts[opt]++;
+          totalPts   += (r.points_earned || 0);
+          totalPlays += 1;
+        });
+        var total  = totalPlays || 1;
+        var avgPts = Math.round(totalPts / total);
+
+        // Render bars
+        var barsHtml = ['A','B','C','D'].map(function(l) {
+          var pct     = Math.round((counts[l] / total) * 100);
+          var isChosen = l === (myOption || '').toUpperCase();
+          return '<div class="others-row">'
+            + '<span class="others-letter">' + l + '</span>'
+            + '<div class="others-bar-wrap"><div class="others-bar-fill' + (isChosen ? ' is-chosen' : '') + '" style="width:0%" data-w="' + pct + '%"></div></div>'
+            + '<span class="others-pct">' + pct + '%</span>'
+            + '</div>';
+        }).join('');
+        document.getElementById('how-others-bars').innerHTML = barsHtml;
+
+        // Animate bars
+        setTimeout(function() {
+          document.querySelectorAll('.others-bar-fill').forEach(function(el) {
+            el.style.width = el.getAttribute('data-w');
+          });
+        }, 80);
+
+        // Avg score line
+        var diff = myPts - avgPts;
+        var diffStr = diff >= 0 ? '+' + diff + ' above average' : Math.abs(diff) + ' below average';
+        document.getElementById('avg-score-line').textContent =
+          'Global average for this scenario: ' + avgPts + ' pts · You scored ' + myPts + ' (' + diffStr + ') · ' + total + ' plays';
+
+        document.getElementById('how-others-wrap').style.display = 'block';
+      }).catch(function(err) {
+        // Fix #1: "How Others Played" section — show minimal error note instead of nothing
+        console.warn('How-others-played unavailable:', err);
+        var wrap = document.getElementById('how-others-wrap');
+        wrap.style.display = 'block';
+        wrap.innerHTML = '<span class="all-options-title">How Others Played</span>'
+          + '<p class="firestore-error-note">Comparison data temporarily unavailable.</p>';
+      });
+  }
+
+  // ── Confetti on perfect score ─────────────────────────────
+  function launchConfetti() {
+    var canvas = document.createElement('canvas');
+    canvas.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;';
+    document.body.appendChild(canvas);
+    var ctx = canvas.getContext('2d');
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    var pieces = Array.from({length:120}, function() {
+      return {
+        x: Math.random() * canvas.width,
+        y: Math.random() * -canvas.height,
+        w: 8 + Math.random()*6, h: 14 + Math.random()*8,
+        r: Math.random()*Math.PI*2,
+        dr: (Math.random()-0.5)*0.15,
+        dy: 2.5 + Math.random()*3.5,
+        dx: (Math.random()-0.5)*1.5,
+        color: ['#8b1a1a','#1a1713','#9a7820','#1a3a5c','#2a5c1a'][Math.floor(Math.random()*5)]
+      };
+    });
+
+    var frame = 0;
+    function draw() {
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      pieces.forEach(function(p) {
+        ctx.save();
+        ctx.translate(p.x,p.y);
+        ctx.rotate(p.r);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+        ctx.restore();
+        p.y += p.dy; p.x += p.dx; p.r += p.dr;
+      });
+      frame++;
+      if (frame < 180) requestAnimationFrame(draw);
+      else document.body.removeChild(canvas);
+    }
+    requestAnimationFrame(draw);
+  }
+
+  // ── Score reveal sound ────────────────────────────────────
+  function playScoreSound(verdictCls) {
+    // Respect sounds.js mute state
+    if (window.localStorage && window.localStorage.getItem('diplomacySimSoundMuted') === 'true') return;
+    try {
+      var ctx = new (window.AudioContext || window.webkitAudioContext)();
+      var notes = verdictCls === 'optimal'  ? [523, 659, 784, 1047] :
+                  verdictCls === 'adequate' ? [440, 523] :
+                  verdictCls === 'weak'     ? [330, 294] :
+                                              [220, 196];
+      var delay = 0;
+      notes.forEach(function(freq) {
+        var osc  = ctx.createOscillator();
+        var gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.frequency.value = freq;
+        osc.type = verdictCls === 'optimal' ? 'triangle' : 'sine';
+        gain.gain.setValueAtTime(0, ctx.currentTime + delay);
+        gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + delay + 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.35);
+        osc.start(ctx.currentTime + delay);
+        osc.stop(ctx.currentTime + delay + 0.35);
+        delay += 0.12;
+      });
+    } catch(e) {}
+  }
+
+  // ── Animated count-up ─────────────────────────────────────
+  function countUp(id, target, duration, onDone) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var start = 0;
+    var startTime = null;
+    function step(ts) {
+      if (!startTime) startTime = ts;
+      var progress = Math.min((ts - startTime) / duration, 1);
+      var ease = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      el.textContent = Math.round(ease * target);
+      if (progress < 1) { requestAnimationFrame(step); }
+      else { el.textContent = target; if (onDone) onDone(); }
+    }
+    requestAnimationFrame(step);
+  }
+
+  // ── Expert take ───────────────────────────────────────────
+  function buildExpertTake(pts, category, option, verdictCls) {
+    var catTakes = {
+      'Current Affairs': {
+        optimal:  'A sound read of the room. In fast-moving crises, controlling the information environment while keeping options open is usually the most durable move.',
+        adequate: 'Defensible under the circumstances. The real cost tends to emerge in the follow-on — watch the reaction from secondary actors.',
+        weak:     'The directive resolved the immediate pressure but created new leverage for the opposing side. Harder positions to recover from than they appear.',
+        poor:     'This is the kind of decision that looks decisive in the moment and is studied as a cautionary example a decade later.'
+      },
+      'Historical Events': {
+        optimal:  'Historians would call this the path of least regret. The decision preserved agency while closing the most dangerous strategic gaps.',
+        adequate: 'Reasonable given the information available. History rarely rewards the cautious move, but it rarely punishes it catastrophically either.',
+        weak:     'The logic is understandable, but the historical record shows this approach tended to accelerate the very outcome it aimed to prevent.',
+        poor:     'There are decisions in history that become synonymous with a particular kind of failure. This is in that category.'
+      },
+      'Economic Strategy': {
+        optimal:  'Clean execution. The fiscal logic is sound and the political economy was managed without creating a structural liability for the next cycle.',
+        adequate: 'The numbers work in the short term. The question is whether the assumptions hold when the external environment changes.',
+        weak:     'The immediate metrics look acceptable. The compounding effects on confidence and investment tend to show up 12-18 months later.',
+        poor:     'This directive prioritised the politically easy path over the economically necessary one. Recovery from this typically takes years.'
+      },
+      'Global Diplomacy': {
+        optimal:  'Multilateral trust is fragile and expensive to rebuild. This directive preserved it. That matters more than it appears in the short run.',
+        adequate: 'Reasonable positioning. The alliance costs are manageable, but the precedent set here will constrain future negotiating room.',
+        weak:     'The bilateral relationship may hold, but third parties have noted the terms. Expect them to test the same logic at the next opportunity.',
+        poor:     'Diplomacy runs on credibility. This directive spent some that will not easily be replenished.'
+      },
+      'Intelligence & Espionage': {
+        optimal:  'Tradecraft and ethics rarely align this cleanly. The decision protected sources while achieving the operational objective.',
+        adequate: 'The collection goal was met. The exposure of method is manageable, but it shortens the operational window for future use.',
+        weak:     'The intelligence gain is real but the precedent creates counterintelligence vulnerabilities that will be exploited in subsequent operations.',
+        poor:     'In intelligence work, the mistakes that feel defensible in the moment tend to be the ones that define careers — and not positively.'
+      },
+      'Nuclear Brinkmanship': {
+        optimal:  'Correct. The goal in nuclear crises is not to win — it is to ensure neither side feels cornered. This directive kept that space open.',
+        adequate: 'The immediate escalation risk was contained. The underlying strategic vulnerability was not resolved, only deferred.',
+        weak:     'The signal sent here will be read differently in the opposing command structure than intended. Miscalculation risk increases.',
+        poor:     'Nuclear crises have a literature of their own. The decisions that almost ended everything share the logic of this directive.'
+      },
+      'Environmental Crises': {
+        optimal:  'The science was respected and the political constraints were navigated. Rare to achieve both simultaneously.',
+        adequate: 'Progress on the ecological dimension. The governance gaps left open may prove as consequential as the immediate threat.',
+        weak:     'The response rate doesn\'t match the threat rate. Environmental tipping points don\'t pause while institutions deliberate.',
+        poor:     'The costs of inaction on environmental crises are paid by populations who had no voice in the decision room.'
+      },
+      'Humanitarian & Human Rights': {
+        optimal:  'Protection without politicisation. The decision put the most vulnerable at the centre of the calculus, which is what the framework requires.',
+        adequate: 'The immediate harm was reduced. The structural conditions that produced it remain, and will produce the next crisis on a similar timeline.',
+        weak:     'Accountability gaps tend to become permission structures. What is not addressed here will be repeated with greater confidence.',
+        poor:     'When institutions fail to respond, they do not simply fail to help — they signal to perpetrators that the cost of action is low.'
+      },
+      'Cyber Warfare': {
+        optimal:  'Proportionate, attributed, and reversible. The hardest combination to achieve in offensive cyber operations. Well executed.',
+        adequate: 'The operational objective was met. Attribution will eventually surface, and the diplomatic management of that moment will matter.',
+        weak:     'Cyber operations without clear off-ramps tend to escalate through mechanisms that were not anticipated at the point of launch.',
+        poor:     'The ungoverned nature of cyberspace means that precedents set here become doctrine — for everyone, not just the initiating actor.'
+      },
+      'Fictional Scenarios': {
+        optimal:  'Even in hypothetical crises, the logic of restraint and reversibility tends to outperform decisive unilateralism. This demonstrates why.',
+        adequate: 'The speculative framework reveals something true: good decisions under uncertainty usually involve preserving future options over optimising for the present.',
+        weak:     'The most common failure mode in speculative crises is treating fictional stakes as lower than real ones. The strategic logic doesn\'t change.',
+        poor:     'Fictional scenarios are useful precisely because they let us examine failure modes without real-world cost. This is one of those failure modes.'
+      }
+    };
+
+    var cat = category || 'Global Diplomacy';
+    var takes = catTakes[cat] || catTakes['Global Diplomacy'];
+    return takes[verdictCls] || takes['adequate'];
+  }
+
+  // ── Share result ──────────────────────────────────────────
+  function showShareMessage(message) {
+    var el = document.getElementById('share-copied-msg');
+    el.textContent = message;
+    el.style.display = 'block';
+    setTimeout(function(){ el.style.display = 'none'; }, 3000);
+  }
+
+  function shareResult() {
+    var res  = JSON.parse(localStorage.getItem('lastResult') || '{}');
+    var pts  = res.pointsEarned || 0;
+    var title = res.scenarioTitle || 'a scenario';
+    var opt  = res.selectedOption ? res.selectedOption.toUpperCase() : '?';
+    var cat  = res.category || 'DiplomacySim';
+    var url  = 'https://diplomacysimbuild.vercel.app/categories.html';
+    var text = '🗞️ DiplomacySim · ' + cat + '\n'
+             + '"' + title + '"\n'
+             + 'I filed Directive ' + opt + ' and earned ' + pts + ' pts.\n'
+             + 'Think you can top that? → ' + url;
+
+    // Use Web Share API if available (mobile native share sheet)
+    if (navigator.share) {
+      navigator.share({
+        title: 'DiplomacySim Result',
+        text: text,
+        url: url
+      }).catch(function(){});
+      return;
+    }
+    // Fallback: copy to clipboard
+    var copyFn = function() {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(function() {
+          showShareMenu(text, url);
+        }).catch(function() { showShareMenu(text, url); });
+      } else {
+        var ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta);
+        showShareMenu(text, url);
+      }
+    };
+    copyFn();
+  }
+
+  function showShareMenu(text, url) {
+    // Show inline share options
+    var existing = document.getElementById('share-menu-popup');
+    if (existing) { existing.remove(); return; }
+    var menu = document.createElement('div');
+    menu.id = 'share-menu-popup';
+    menu.style.cssText = 'margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;';
+    var waUrl = 'https://wa.me/?text=' + encodeURIComponent(text);
+    menu.innerHTML =
+      '<a href="' + waUrl + '" target="_blank" rel="noopener" style="font-family:\'Libre Baskerville\',serif;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--paper);background:#25d366;padding:7px 14px;text-decoration:none;display:inline-block;">📱 WhatsApp</a>'
+      + '<button onclick="navigator.clipboard && navigator.clipboard.writeText(document.getElementById(\'share-menu-popup\').dataset.text)" style="font-family:\'Libre Baskerville\',serif;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink);background:var(--paper-alt);border:1px solid #c8c0b0;padding:7px 14px;cursor:pointer;">📋 Copy</button>'
+      + '<button onclick="document.getElementById(\'share-menu-popup\').remove()" style="font-family:\'Libre Baskerville\',serif;font-size:10px;color:var(--ink-muted);background:none;border:none;cursor:pointer;">✕</button>';
+    menu.dataset.text = text;
+    var btn = document.querySelector('[onclick="shareResult()"]');
+    if (btn && btn.parentNode) {
+      btn.parentNode.insertBefore(menu, btn.nextSibling);
+    } else {
+      document.getElementById('share-copied-msg').after(menu);
+    }
+    // Also set clipboard text on the copy button
+    menu.querySelector('button').addEventListener('click', function() {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(function() {
+          showShareMessage('Result copied to clipboard.');
+        });
+      }
+    });
+    showShareMessage('Copied! Share via WhatsApp or paste anywhere.');
+  }
+
+  // ── Challenge a friend ────────────────────────────────────
+  function challengeFriend() {
+    var result = JSON.parse(localStorage.getItem('lastResult') || '{}');
+    var scenId = result.scenarioId || '';
+    var wrap   = document.getElementById('challenge-link-wrap');
+    if (!scenId) { showShareMessage('Play a saved scenario first to create a challenge link.'); return; }
+    var link = window.location.origin + '/scenario.html?id=' + scenId;
+    document.getElementById('challenge-link-input').value = link;
+    wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
+  }
+
+  function copyChallengeLink() {
+    var inp = document.getElementById('challenge-link-input');
+    inp.select();
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(inp.value);
+    } else {
+      document.execCommand('copy');
+    }
+    showShareMessage('Challenge link copied.');
+  }
+
+  // ── Diplomatic rank from total points ────────────────────
+  function getDiplomaticRank(totalPts) {
+    if (totalPts >= 10000) return 'Secretary of State';
+    if (totalPts >= 5000)  return 'Ambassador';
+    if (totalPts >= 2000)  return 'Deputy Chief of Mission';
+    if (totalPts >= 1000)  return 'Counsellor';
+    if (totalPts >= 500)   return 'First Secretary';
+    if (totalPts >= 200)   return 'Second Secretary';
+    if (totalPts >= 50)    return 'Attaché';
+    return 'Diplomatic Trainee';
+  }
+
+  // ── Score breakdown population ────────────────────────────
+  function populateBreakdown(basePts, multiplier, hintUsed, finalPts) {
+    if (!basePts && basePts !== 0) return;
+    document.getElementById('bd-base').textContent  = basePts + ' pts';
+    document.getElementById('bd-mult').textContent  = multiplier ? multiplier.toFixed(2) + '×' : '1.00×';
+    document.getElementById('bd-total').textContent = finalPts + ' pts';
+    if (hintUsed) document.getElementById('bd-hint-row').style.display = 'flex';
+    document.getElementById('score-breakdown').style.display = 'block';
+  }
+
+  // ── Theatre completion check ──────────────────────────────
+  function checkTheatreCompletion(uid, category, currentScenId) {
+    // Get all scenario IDs in this theatre
+    db.collection('scenarios').where('category', '==', category).get()
+      .then(function(scenSnap) {
+        if (scenSnap.empty) return;
+        var allIds = scenSnap.docs.map(function(d){ return d.id; });
+        // Get all responses by this user in this category
+        return db.collection('responses')
+          .where('user_id', '==', uid)
+          .where('category', '==', category)
+          .get()
+          .then(function(respSnap) {
+            var playedIds = {};
+            respSnap.forEach(function(d){ playedIds[d.data().scenario_id] = true; });
+            // Include current scenario (just completed)
+            if (currentScenId) playedIds[currentScenId] = true;
+            var completedCount = allIds.filter(function(id){ return playedIds[id]; }).length;
+            if (completedCount >= allIds.length && allIds.length > 0) {
+              // Don't show if already celebrated this theatre this session
+              var celebKey = 'ds_celebrated_' + category;
+              try {
+                if (sessionStorage.getItem(celebKey)) return;
+                sessionStorage.setItem(celebKey, '1');
+              } catch(e) {}
+              setTimeout(function() {
+                var modal = document.getElementById('theatre-complete-modal');
+                var nameEl = document.getElementById('theatre-complete-name');
+                if (nameEl) nameEl.textContent = category;
+                if (modal) {
+                  modal.style.display = 'flex';
+                  if (window.DiplomacySounds) window.DiplomacySounds.play('celebrate');
+                }
+              }, 2200);
+            }
+          });
+      }).catch(function(){});
+  }
+
+  // ── Related scenarios loader ───────────────────────────────
+  function loadRelatedScenarios(category, currentId) {
+    if (!category) return;
+    db.collection('scenarios').where('category','==',category).limit(12).get()
+      .then(function(snap) {
+        var others = snap.docs.filter(function(d){ return d.id !== currentId; });
+        if (others.length < 2) return;
+        // pick 3 random
+        var picks = [];
+        var pool  = others.slice();
+        while (picks.length < 3 && pool.length) {
+          var idx = Math.floor(Math.random() * pool.length);
+          picks.push(pool.splice(idx,1)[0]);
+        }
+        var html = picks.map(function(doc) {
+          var d = doc.data();
+          return '<a class="related-card" href="scenario.html?id=' + doc.id + '" onclick="localStorage.setItem(\'selectedCategory\',\'' + escapeHTML(category) + '\')">'
+            + '<div class="related-card-cat">' + escapeHTML(d.category || '') + '</div>'
+            + '<div class="related-card-title">' + escapeHTML(d.title || '') + '</div>'
+            + '</a>';
+        }).join('');
+        document.getElementById('related-scenarios-list').innerHTML = html;
+        document.getElementById('related-scenarios-wrap').style.display = 'block';
+      }).catch(function(){});
+  }
+
+  // ── Auto-advance ──────────────────────────────────────────
+  var _autoAdvanceInterval = null; // Fix #20: store reference for cleanup
+  function startAutoAdvance(category) {
+    var bar  = document.getElementById('auto-advance-bar');
+    var fill = document.getElementById('auto-advance-fill');
+    var msg  = document.getElementById('auto-advance-msg');
+    if (!category) return;
+    var secs = 10;
+    bar.style.display = 'block';
+    msg.style.display = 'block';
+    msg.textContent = 'Next briefing in ' + secs + 's — click anywhere to cancel';
+    _autoAdvanceInterval = setInterval(function(){
+      secs--;
+      msg.textContent = 'Next briefing in ' + secs + 's — click anywhere to cancel';
+      if (secs <= 0) {
+        clearInterval(_autoAdvanceInterval);
+        try { localStorage.setItem('selectedCategory', category); } catch(e) {} // Fix #3
+        window.location.href = 'scenario.html?category=' + encodeURIComponent(category);
+      }
+    }, 1000);
+    // Force browser to register width:100% before starting the transition
+    fill.style.transition = 'none';
+    fill.style.width = '100%';
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        fill.style.transition = 'width 10s linear';
+        fill.style.width = '0%';
+      });
+    });
+    // Cancel on click
+    document.addEventListener('click', function cancel(){
+      clearInterval(_autoAdvanceInterval);
+      bar.style.display = 'none';
+      msg.style.display = 'none';
+      document.removeEventListener('click', cancel);
+    }, { once: true });
+  }
+  // Fix #20: clear interval if user navigates away mid-countdown
+  window.addEventListener('pagehide', function() {
+    if (_autoAdvanceInterval) clearInterval(_autoAdvanceInterval);
+  });
+
+  // ── Init ──────────────────────────────────────────────────
+  buildPage();
+
+  // ── Real outcome reveal (Historical Events) ───────────────
+  (function() {
+    var realOutcome = scenData.realOutcome || scenData.real_outcome || '';
+    if (!realOutcome || (result.category || '').indexOf('Historical') === -1) return;
+    document.getElementById('real-outcome-text').textContent = realOutcome;
+    document.getElementById('real-outcome-block').style.display = 'block';
+  })();
+
+  // ── Star rating hover ─────────────────────────────────────
+  (function() {
+    var stars = document.querySelectorAll('.star-btn');
+    stars.forEach(function(star) {
+      star.addEventListener('mouseenter', function() {
+        var val = parseInt(star.getAttribute('data-val'));
+        stars.forEach(function(s) {
+          s.style.color = parseInt(s.getAttribute('data-val')) <= val ? '#9a7820' : '#c8c0b0';
+        });
+      });
+      star.addEventListener('mouseleave', function() {
+        var current = parseInt(document.getElementById('rating-block').getAttribute('data-chosen') || '0');
+        stars.forEach(function(s) {
+          s.style.color = parseInt(s.getAttribute('data-val')) <= current ? '#9a7820' : '#c8c0b0';
+        });
+      });
+    });
+    // Load existing avg rating
+    var scenId = result.scenarioId;
+    if (scenId) {
+      db.collection('ratings').where('scenario_id','==',scenId).get()
+        .then(function(snap) {
+          if (snap.empty) {
+            document.getElementById('rating-avg').textContent = 'Be the first to rate this scenario.';
+            return;
+          }
+          var total = 0;
+          snap.forEach(function(doc){ total += doc.data().rating || 0; });
+          var avg = (total / snap.size).toFixed(1);
+          document.getElementById('rating-avg').textContent = avg + ' ★ average from ' + snap.size + ' rating' + (snap.size !== 1 ? 's' : '');
+          // Check if current user already rated
+          var curUser = auth.currentUser;
+          if (curUser) {
+            db.collection('ratings').doc(curUser.uid + '_' + scenId).get().then(function(doc) {
+              if (!doc.exists) return;
+              var chosen = doc.data().rating || 0;
+              document.getElementById('rating-block').setAttribute('data-chosen', chosen);
+              document.querySelectorAll('.star-btn').forEach(function(s) {
+                s.style.color = parseInt(s.getAttribute('data-val')) <= chosen ? '#9a7820' : '#c8c0b0';
+              });
+              document.getElementById('rating-msg').textContent = 'You rated this scenario ' + chosen + ' star' + (chosen !== 1 ? 's' : '') + '.';
+              document.getElementById('rating-msg').style.display = 'block';
+            });
+          }
+        }).catch(function(){});
+    }
+  })();
+
+  // ── Report / flag scenario ────────────────────────────────
+  function reportScenario() {
+    var scenId = result.scenarioId;
+    if (!scenId) { showShareMessage('No scenario on record to flag.'); return; }
+    var reason = prompt('Flag this scenario for review.\nBriefly describe the issue (optional):');
+    if (reason === null) return; // cancelled
+    var reportData = {
+      scenario_id: scenId,
+      scenario_title: result.scenarioTitle || '',
+      reason: reason || 'No reason given',
+      reported_at: new Date().toISOString(),
+      reporter_uid: null
+    };
+    var reporter = auth.currentUser;
+    reportData.reporter_uid = reporter ? reporter.uid : 'guest';
+    db.collection('reports').add(reportData).then(function() {
+      showShareMessage('Scenario flagged for admin review. Thank you.');
+    }).catch(function() {
+      showShareMessage('Could not submit flag. Please try again.');
+    });
+  }
+
+  // ── Submit star rating ────────────────────────────────────
+  function submitRating(val) {
+    var scenId = result.scenarioId;
+    if (!scenId) return;
+    var block = document.getElementById('rating-block');
+    if (block.getAttribute('data-chosen')) return; // already rated
+    var user = auth.currentUser;
+    (function doRate(user) {
+      if (!user) {
+        document.getElementById('rating-msg').textContent = 'Sign in to rate scenarios.';
+        document.getElementById('rating-msg').style.display = 'block';
+        return;
+      }
+      block.setAttribute('data-chosen', val);
+      document.querySelectorAll('.star-btn').forEach(function(s) {
+        s.style.color = parseInt(s.getAttribute('data-val')) <= val ? '#9a7820' : '#c8c0b0';
+        s.style.cursor = 'default';
+        s.disabled = true;
+        s.setAttribute('aria-disabled', 'true');
+        s.onclick = null;
+      });
+      db.collection('ratings').doc(user.uid + '_' + scenId).set({
+        user_id:     user.uid,
+        scenario_id: scenId,
+        category:    result.category || '',
+        rating:      val,
+        rated_at:    new Date().toISOString()
+      }).then(function() {
+        document.getElementById('rating-msg').textContent = 'Rating saved. Thank you.';
+        document.getElementById('rating-msg').style.display = 'block';
+      }).catch(function() {
+        document.getElementById('rating-msg').textContent = 'Could not save rating.';
+        document.getElementById('rating-msg').style.display = 'block';
+      });
+    })(user);
+  }
+
+</script>
+
+<!-- Back to top -->
+<button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
+<script>
+  (function(){
+    var btn = document.getElementById('back-to-top');
+    window.addEventListener('scroll', function(){ btn.classList.toggle('visible', window.scrollY > 400); }, { passive: true });
+    // Animate perf bar on load
+    setTimeout(function(){
+      var bar = document.getElementById('perf-bar');
+      if (bar) { var w = bar.style.width; bar.style.width='0%'; setTimeout(function(){ bar.style.width=w; },50); }
+    }, 400);
+  })();
+</script>
+
+<!-- Mobile bottom nav -->
+<nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+  <div class="mobile-bottom-nav-inner">
+    <a href="index.html" class="mobile-nav-btn"><span class="mobile-nav-icon">🏠</span>Home</a>
+    <a href="categories.html" class="mobile-nav-btn"><span class="mobile-nav-icon">⚔</span>Play</a>
+    <a href="leaderboard.html" class="mobile-nav-btn"><span class="mobile-nav-icon">🏆</span>Rankings</a>
+    <a href="forum.html" class="mobile-nav-btn"><span class="mobile-nav-icon">💬</span>Forum</a>
+    <a href="profile.html" class="mobile-nav-btn"><span class="mobile-nav-icon">👤</span>Profile</a>
+  </div>
+</nav>
+</body>
+</html>

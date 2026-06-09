@@ -1,0 +1,17 @@
+{
+  "name": "DiplomacySim",
+  "short_name": "DiplomacySim",
+  "description": "Ten theatres of strategic decision-making. Timed choices. One live ranking.",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#f5f0e8",
+  "theme_color": "#1a1713",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' fill='%231a1713'/><text x='96' y='130' font-family='serif' font-size='100' font-weight='900' fill='%23f5f0e8' text-anchor='middle'>D</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    }
+  ]
+}

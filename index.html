@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DiplomacySim — Diplomatic Crisis Simulator</title>
+  <meta name="description" content="Step into the shoes of a world leader. Navigate fictional diplomatic crises, make high-stakes decisions, and see how history unfolds. Free, educational, and engaging for all ages."/>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+  <!-- Open Graph -->
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="DiplomacySim — Diplomatic Crisis Simulator"/>
+  <meta property="og:description" content="Navigate fictional diplomatic crises and make high-stakes decisions as a world leader. Free educational simulation."/>
+  <meta property="og:image" content="https://res.cloudinary.com/djkzjki1t/image/upload/w_1200,h_630,c_fill,g_center/diplomacysim_og.jpg"/>
+  <meta property="og:url" content="https://diplomacysimbuild.vercel.app/"/>
+  <meta property="og:site_name" content="DiplomacySim"/>
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="DiplomacySim — Diplomatic Crisis Simulator"/>
+  <meta name="twitter:description" content="Navigate fictional diplomatic crises and make high-stakes decisions as a world leader."/>
+  <meta name="twitter:image" content="https://res.cloudinary.com/djkzjki1t/image/upload/w_1200,h_630,c_fill,g_center/diplomacysim_og.jpg"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=UnifrakturMaguntia&family=IM+Fell+English:ital@0;1&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:       #1a1713;
+      --ink-light: #3d3a34;
+      --ink-muted: #6a6460;
+      --rule:      #1a1713;
+      --paper:     #f5f0e8;
+      --paper-alt: #ede8db;
+      --cream:     #faf7f2;
+      --accent:    #8b1a1a;
+      --col-gap:   24px;
+    }
+
+    html { font-size: 16px; }
+
+    body {
+      background-color: var(--cream);
+      color: var(--ink);
+      font-family: 'Libre Baskerville', Georgia, serif;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.6;
+    }
+
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 32px 64px;
+      background: var(--paper);
+      box-shadow: 0 0 60px rgba(0,0,0,0.12);
+      border-left: 1px solid #c8c0b0;
+      border-right: 1px solid #c8c0b0;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--rule);
+      font-family: 'Libre Baskerville', serif;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: var(--ink-muted);
+    }
+    .topbar a { color: var(--ink-muted); text-decoration: none; }
+    .topbar a:hover { color: var(--accent); }
+    .topbar-center { display: flex; gap: 18px; align-items: center; }
+
+    /* ── Masthead ── */
+    .masthead {
+      text-align: center;
+      padding: 28px 0 18px;
+      border-bottom: 3px double var(--rule);
+    }
+    .masthead-eyebrow {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 10.5px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 10px;
+    }
+    .masthead-title {
+      font-family: 'UnifrakturMaguntia', cursive;
+      font-size: clamp(52px, 8vw, 90px);
+      line-height: 1;
+      color: var(--ink);
+      letter-spacing: 0.01em;
+    }
+    .masthead-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 14px 0 10px;
+    }
+    .masthead-rule::before,
+    .masthead-rule::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
+    .masthead-rule-diamond {
+      width: 6px; height: 6px;
+      background: var(--ink);
+      transform: rotate(45deg);
+      flex-shrink: 0;
+    }
+    .masthead-tagline {
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      font-size: 15px;
+      color: var(--ink-light);
+    }
+    .masthead-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      color: var(--ink-muted);
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid var(--rule);
+    }
+
+    /* ── Nav strip ── */
+    .nav-strip {
+      display: flex;
+      justify-content: center;
+      border-bottom: 3px solid var(--rule);
+    }
+    .nav-strip a {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+      padding: 9px 18px;
+      border-right: 1px solid var(--rule);
+      transition: background 0.15s, color 0.15s;
+    }
+    .nav-strip a:first-child { border-left: 1px solid var(--rule); }
+    .nav-strip a:hover { background: var(--ink); color: var(--paper); }
+    .nav-strip a.active { background: var(--ink); color: var(--paper); }
+    .nav-strip a.signout { background: var(--accent); color: var(--paper); }
+    .nav-strip a.signout:hover { background: #6a0f0f; }
+
+    /* ── Section label ── */
+    .section-label {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--paper);
+      background: var(--ink);
+      display: inline-block;
+      padding: 3px 10px;
+    }
+
+    hr.thick  { border: none; border-top: 3px solid var(--rule); margin: 0; }
+    hr.thin   { border: none; border-top: 1px solid #c8c0b0; margin: 0; }
+    hr.double { border: none; border-top: 3px double var(--rule); margin: 0; }
+
+    /* ── Grid layouts ── */
+    .grid-main {
+      display: grid;
+      grid-template-columns: 1fr 2px 1.7fr 2px 1fr;
+      gap: 0;
+      padding: 22px 0;
+      border-bottom: 1px solid #c8c0b0;
+    }
+    .col-divider { background: #c8c0b0; width: 1px; margin: 0 22px; }
+
+    .grid-bottom {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      border-bottom: 1px solid #c8c0b0;
+    }
+    .grid-bottom .col {
+      padding: 20px 22px;
+      border-right: 1px solid #c8c0b0;
+    }
+    .grid-bottom .col:last-child { border-right: none; }
+    .grid-bottom .col:first-child { padding-left: 0; }
+
+    /* ── Typography ── */
+    .headline-xl {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 700;
+      line-height: 1.08;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+    .headline-xl em { font-style: italic; font-weight: 400; }
+
+    .headline-lg {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(20px, 2.5vw, 28px);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+
+    .headline-md {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 1.2;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .headline-sm {
+      font-family: 'Playfair Display', serif;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.25;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+
+    .byline {
+      font-size: 11px;
+      font-style: italic;
+      color: var(--ink-muted);
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+    }
+
+    .body-text {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: var(--ink-light);
+      hyphens: auto;
+    }
+    .body-text + .body-text { margin-top: 10px; }
+
+    .drop-cap::first-letter {
+      font-family: 'Playfair Display', serif;
+      font-size: 4.2em;
+      font-weight: 900;
+      float: left;
+      line-height: 0.8;
+      margin: 6px 6px 0 0;
+      color: var(--ink);
+    }
+
+    /* ── Pull quote ── */
+    .pull-quote {
+      border-top: 3px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      padding: 12px 0;
+      margin: 18px 0;
+    }
+    .pull-quote p {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-style: italic;
+      line-height: 1.45;
+      color: var(--ink);
+    }
+
+    /* ── Feature image ── */
+    .feature-img {
+      width: 100%;
+      background: var(--paper-alt);
+      border: 1px solid #c8c0b0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 20px;
+      margin-bottom: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+    .feature-img-caption {
+      font-size: 11px;
+      font-style: italic;
+      color: var(--ink-muted);
+      margin-top: 8px;
+      text-align: center;
+    }
+
+    /* ── Category grid ── */
+    .category-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: #c8c0b0;
+      border: 1px solid #c8c0b0;
+      margin: 14px 0;
+    }
+    .category-item {
+      background: var(--paper);
+      padding: 14px;
+      cursor: pointer;
+      transition: background 0.15s;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    .category-item:hover { background: var(--paper-alt); }
+    .category-item:hover .category-num { color: var(--accent); }
+    .category-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      font-weight: 900;
+      line-height: 1;
+      color: var(--ink-muted);
+      display: block;
+      transition: color 0.15s;
+    }
+    .category-name {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-top: 4px;
+      display: block;
+    }
+
+    /* ── CTA Buttons ── */
+    .cta-btn {
+      display: inline-block;
+      font-family: 'Libre Baskerville', serif;
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--paper);
+      background: var(--ink);
+      border: 2px solid var(--ink);
+      padding: 10px 28px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      margin-top: 16px;
+    }
+    .cta-btn:hover { background: var(--accent); border-color: var(--accent); }
+
+    .cta-btn-outline {
+      display: inline-block;
+      font-family: 'Libre Baskerville', serif;
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink);
+      background: transparent;
+      border: 2px solid var(--ink);
+      padding: 10px 28px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      margin-top: 16px;
+      margin-left: 10px;
+    }
+    .cta-btn-outline:hover { background: var(--ink); color: var(--paper); }
+
+    /* ── Leaderboard ── */
+    .leaderboard-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Libre Baskerville', serif;
+      font-size: 12.5px;
+    }
+    .leaderboard-table th {
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      border-bottom: 2px solid var(--rule);
+      padding: 6px 0;
+      text-align: left;
+      color: var(--ink-muted);
+      font-weight: 700;
+    }
+    .leaderboard-table td {
+      padding: 9px 0;
+      border-bottom: 1px solid #d8d0c0;
+      color: var(--ink-light);
+      vertical-align: middle;
+    }
+    .leaderboard-table tr:last-child td { border-bottom: none; }
+    .rank-num {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: 16px;
+      color: var(--ink-muted);
+      width: 28px;
+    }
+    .rank-num.gold   { color: #9a7820; }
+    .rank-num.silver { color: #7a7a7a; }
+    .rank-num.bronze { color: #8b5a2b; }
+    .pts {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--ink);
+      text-align: right;
+    }
+
+    /* ── Ticker ── */
+    .ticker {
+      background: var(--ink);
+      color: var(--paper);
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      font-family: 'Libre Baskerville', serif;
+      font-size: 12px;
+    }
+    .ticker-label {
+      background: var(--accent);
+      padding: 7px 14px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-size: 10px;
+      flex-shrink: 0;
+    }
+    .ticker-track { overflow: hidden; flex: 1; }
+    .ticker-inner {
+      display: flex;
+      animation: ticker 28s linear infinite;
+      white-space: nowrap;
+    }
+    .ticker-inner span { padding: 7px 32px 7px 20px; opacity: 0.85; }
+    .ticker-inner span::before {
+      content: '◆';
+      margin-right: 14px;
+      font-size: 8px;
+      opacity: 0.6;
+      vertical-align: middle;
+    }
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ── How it works ── */
+    .step-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .step-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 900;
+      line-height: 1;
+      color: var(--ink-muted);
+      flex-shrink: 0;
+      width: 32px;
+    }
+    .step-text { flex: 1; }
+    .step-title {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: 3px;
+    }
+    .step-desc {
+      font-size: 12.5px;
+      line-height: 1.6;
+      color: var(--ink-muted);
+    }
+
+    /* ── Ad box ── */
+    .ad-box {
+      border: 2px solid var(--ink);
+      padding: 18px;
+      text-align: center;
+      margin: 18px 0;
+    }
+    .ad-label {
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 8px;
+      display: block;
+    }
+    .ad-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 900;
+      line-height: 1.15;
+      color: var(--ink);
+    }
+    .ad-subtext {
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      font-size: 13px;
+      color: var(--ink-muted);
+      margin-top: 6px;
+    }
+
+    /* ── User pill in topbar ── */
+    .user-pill { display: none; align-items: center; gap: 10px; }
+    .user-pill-name {
+      font-size: 11px; font-weight: 700; color: var(--ink);
+      max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .user-pill-name span { font-weight: 400; color: var(--ink-muted); margin-right: 4px; }
+    .signout-btn {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: #fff; background: var(--accent);
+      border: none; padding: 4px 10px; cursor: pointer; transition: background 0.15s;
+    }
+    .signout-btn:hover { background: #6a0f0f; }
+
+    /* ── Leaderboard skeleton ── */
+    .skeleton {
+      background: linear-gradient(90deg, var(--paper-alt) 25%, var(--cream) 50%, var(--paper-alt) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 2px;
+      display: inline-block;
+    }
+    @keyframes shimmer { to { background-position: -200% 0; } }
+
+    /* ── Footer ── */
+    .footer {
+      border-top: 3px double var(--rule);
+      padding: 18px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: var(--ink-muted);
+      margin-top: 24px;
+    }
+    .footer a { color: var(--ink-muted); text-decoration: none; }
+    .footer a:hover { color: var(--accent); }
+  </style>
+  <link rel="stylesheet" href="style.css?v=20260609pro">
+  <script src="transitions.js?v=20260609pro" defer></script>
+  <script src="sounds.js?v=20260609pro" defer></script>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1a1713">
+</head>
+<body>
+<div class="page">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <span>Established MMXXIV &nbsp;·&nbsp; Vol. I, No. 1</span>
+    <div class="topbar-center">
+      <!-- Shown when NOT logged in -->
+      <a href="login.html" id="topbar-signin-link" style="display:none;">Sign In</a>
+      <span id="topbar-dot-1" style="display:none;">·</span>
+      <a href="leaderboard.html">Rankings</a>
+      <span>·</span>
+      <a href="admin.html" id="topbar-admin-link" style="display:none;">Administration</a>
+      <!-- Shown when logged in -->
+      <div class="user-pill" id="user-pill">
+        <div class="user-pill-name"><span>Signed in as </span><span id="user-display-name">—</span></div>
+        <button class="signout-btn" onclick="doSignOut()">Sign Out</button>
+      </div>
+    </div>
+    <span id="topbar-date">Loading date…</span>
+  </div>
+
+  <!-- Masthead -->
+  <div class="masthead">
+    <div class="masthead-eyebrow">Strategy Desk &nbsp;·&nbsp; Interactive World Affairs</div>
+    <div class="masthead-title">DiplomacySim</div>
+    <div class="masthead-rule">
+      <div class="masthead-rule-diamond"></div>
+      <div class="masthead-rule-diamond"></div>
+      <div class="masthead-rule-diamond"></div>
+    </div>
+    <div class="masthead-tagline">"Read the crisis. Choose a policy. Live with the outcome."</div>
+    <div class="masthead-meta">
+      <span>Current Affairs &nbsp;·&nbsp; Historical Events &nbsp;·&nbsp; Global Diplomacy &nbsp;·&nbsp; Economic Strategy &nbsp;·&nbsp; Fictional Scenarios</span>
+      <span>Intelligence &amp; Espionage &nbsp;·&nbsp; Nuclear Brinkmanship &nbsp;·&nbsp; Environmental Crises &nbsp;·&nbsp; Humanitarian &amp; Human Rights &nbsp;·&nbsp; Cyber Warfare</span>
+    </div>
+  </div>
+
+  <!-- Nav strip -->
+  <nav class="nav-strip">
+    <a href="index.html" class="active">Home</a>
+    <a href="categories.html">Play Now</a>
+    <a href="leaderboard.html">Leaderboard</a>
+    <a href="forum.html">Forum</a>
+    <a href="profile.html">Profile</a>
+    <a href="login.html" id="nav-signin-link" style="display:none;">Sign In</a>
+    <a href="login.html" id="nav-register-link" onclick="goRegister(event)" style="display:none;">Register</a>
+    <a href="admin.html" id="nav-admin-link" style="display:none;">Admin</a>
+  </nav>
+<script src="js/ds-config.js"></script>
+<script src="nav-init.js"></script>
+
+  <!-- Live player count bar -->
+  <div style="background:var(--paper-alt);border-bottom:1px solid #c8c0b0;padding:6px 0;text-align:center;font-size:11px;font-family:'Libre Baskerville',serif;color:var(--ink-muted);letter-spacing:0.06em;" id="live-stats-bar">
+    Loading statistics…
+  </div>
+
+  <!-- Breaking news ticker -->
+  <div class="ticker" style="margin-top:0;">
+    <div class="ticker-label">Dispatches</div>
+    <div class="ticker-track">
+      <div class="ticker-inner" id="ticker-inner">
+        <span>New briefings are live across all ten theatres</span>
+        <span>Fast decisions earn a stronger time bonus</span>
+        <span>Every directive changes your score and standing</span>
+        <span>Study the consequence report before your next crisis</span>
+        <span>Challenge yourself across history, markets, and diplomacy</span>
+        <span>New briefings are live across all ten theatres</span>
+        <span>Fast decisions earn a stronger time bonus</span>
+        <span>Every directive changes your score and standing</span>
+        <span>Study the consequence report before your next crisis</span>
+        <span>Challenge yourself across history, markets, and diplomacy</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MAIN GRID ── -->
+  <div style="padding: 4px 0;"></div>
+  <div class="grid-main">
+
+    <!-- Left column -->
+    <div style="padding-right: 0;">
+      <span class="section-label">How It Works</span>
+      <div style="height:10px;"></div>
+
+      <div class="step-row">
+        <div class="step-num">I</div>
+        <div class="step-text">
+          <div class="step-title">Choose Your Theatre</div>
+          <div class="step-desc">Pick a theatre: live crises, history, intelligence, nuclear, environment, humanitarian, cyber, or speculative pressure tests.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">II</div>
+        <div class="step-text">
+          <div class="step-title">Read the Briefing</div>
+          <div class="step-desc">Absorb the actors, constraints, deadlines, and risks before you move.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">III</div>
+        <div class="step-text">
+          <div class="step-title">Issue a Directive</div>
+          <div class="step-desc">Choose one of four policies. Each has a hidden score and a different diplomatic cost.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">IV</div>
+        <div class="step-text">
+          <div class="step-title">Review the Outcome</div>
+          <div class="step-desc">See what worked, what failed, how many points you earned, and where you rank.</div>
+        </div>
+      </div>
+
+      <!-- Ad box — CTA changes based on auth state -->
+      <!-- Featured / Daily scenario -->
+      <div id="featured-box" style="border:2px solid var(--ink);border-top:4px solid var(--accent);padding:16px;margin-bottom:18px;background:var(--cream);display:none;">
+        <span style="font-size:9px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:6px;">Today's Briefing</span>
+        <div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--ink);line-height:1.2;margin-bottom:4px;" id="featured-title">—</div>
+        <div style="font-size:11px;font-style:italic;color:var(--ink-muted);margin-bottom:12px;" id="featured-cat">—</div>
+        <a id="featured-btn" href="categories.html" style="display:inline-block;font-family:'Libre Baskerville',serif;font-size:10.5px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--paper);background:var(--accent);padding:8px 18px;text-decoration:none;">Play Now →</a>
+      </div>
+
+      <div class="ad-box">
+        <span class="ad-label">Notice</span>
+        <div class="ad-text">Enter the Briefing Room</div>
+        <div class="ad-subtext">Ten theatres. Timed choices. One live ranking.</div>
+        <br>
+        <a href="login.html" class="cta-btn" id="ad-cta-btn" style="margin-top:10px;">Start Playing</a>
+        <button onclick="goQuickPlay()" style="display:block;width:100%;margin-top:10px;font-family:'Libre Baskerville',serif;font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink);background:transparent;border:2px solid var(--ink);padding:10px 18px;cursor:pointer;transition:background 0.15s,color 0.15s;" onmouseover="this.style.background='var(--ink)';this.style.color='var(--paper)'" onmouseout="this.style.background='transparent';this.style.color='var(--ink)'">⚡ Random Briefing</button>
+      </div>
+    </div>
+
+    <div class="col-divider"></div>
+
+    <!-- Centre column -->
+    <div style="padding: 0 var(--col-gap);">
+
+      <div class="feature-img" style="height:200px; justify-content:center;">
+        <svg viewBox="0 0 380 180" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" style="position:absolute;inset:0;">
+          <rect width="380" height="180" fill="#ede8db"/>
+          <line x1="0" y1="60" x2="380" y2="60" stroke="#c8c0b0" stroke-width="0.5"/>
+          <line x1="0" y1="90" x2="380" y2="90" stroke="#c8c0b0" stroke-width="0.5"/>
+          <line x1="0" y1="120" x2="380" y2="120" stroke="#c8c0b0" stroke-width="0.5"/>
+          <line x1="95" y1="0" x2="95" y2="180" stroke="#c8c0b0" stroke-width="0.5"/>
+          <line x1="190" y1="0" x2="190" y2="180" stroke="#c8c0b0" stroke-width="0.5"/>
+          <line x1="285" y1="0" x2="285" y2="180" stroke="#c8c0b0" stroke-width="0.5"/>
+          <path d="M30 70 Q50 55 70 65 Q80 75 75 90 Q65 100 50 95 Q30 90 30 70Z" fill="#1a1713" opacity="0.15"/>
+          <path d="M100 50 Q130 40 160 55 Q175 65 165 80 Q155 95 140 100 Q120 108 105 95 Q90 80 100 50Z" fill="#1a1713" opacity="0.15"/>
+          <path d="M105 110 Q120 105 130 115 Q135 125 125 132 Q112 137 105 128 Z" fill="#1a1713" opacity="0.12"/>
+          <path d="M200 45 Q230 35 255 50 Q270 60 268 78 Q260 95 240 98 Q218 100 208 85 Q195 68 200 45Z" fill="#1a1713" opacity="0.15"/>
+          <path d="M275 55 Q295 48 315 58 Q325 68 318 82 Q308 92 290 90 Q272 84 275 55Z" fill="#1a1713" opacity="0.13"/>
+          <path d="M330 60 Q350 55 370 65 Q375 78 365 88 Q350 95 335 88 Q322 78 330 60Z" fill="#1a1713" opacity="0.1"/>
+          <path d="M205 115 Q220 110 235 120 Q242 130 235 140 Q220 148 208 140 Q198 130 205 115Z" fill="#1a1713" opacity="0.12"/>
+          <path d="M0,90 Q95,80 190,90 Q285,100 380,90" fill="none" stroke="#1a1713" stroke-width="0.5" opacity="0.3"/>
+          <circle cx="190" cy="90" r="5" fill="none" stroke="#8b1a1a" stroke-width="1.5"/>
+          <circle cx="190" cy="90" r="2" fill="#8b1a1a"/>
+          <line x1="190" y1="90" x2="65" y2="78" stroke="#8b1a1a" stroke-width="0.7" stroke-dasharray="3,3" opacity="0.6"/>
+          <line x1="190" y1="90" x2="140" y2="95" stroke="#8b1a1a" stroke-width="0.7" stroke-dasharray="3,3" opacity="0.6"/>
+          <line x1="190" y1="90" x2="240" y2="70" stroke="#8b1a1a" stroke-width="0.7" stroke-dasharray="3,3" opacity="0.6"/>
+          <line x1="190" y1="90" x2="300" y2="72" stroke="#8b1a1a" stroke-width="0.7" stroke-dasharray="3,3" opacity="0.6"/>
+          <circle cx="65" cy="78" r="2" fill="#1a1713" opacity="0.5"/>
+          <circle cx="140" cy="95" r="2" fill="#1a1713" opacity="0.5"/>
+          <circle cx="240" cy="70" r="2" fill="#1a1713" opacity="0.5"/>
+          <circle cx="300" cy="72" r="2" fill="#1a1713" opacity="0.5"/>
+          <text x="190" y="163" text-anchor="middle" font-family="'Libre Baskerville', serif" font-size="9" fill="#7a7369" font-style="italic">Ten connected theatres of strategic decision-making</text>
+        </svg>
+      </div>
+      <div class="feature-img-caption">Map room sketch: how a local decision can ripple across alliances, markets, and borders.</div>
+
+      <div class="headline-xl" style="margin-top:14px;">
+        <em>Can you make the hard call</em> before the room runs out of time?
+      </div>
+      <div class="byline">Field Manual &nbsp;·&nbsp; DiplomacySim Briefing Desk</div>
+      <hr class="thin" style="margin: 10px 0;">
+
+      <p class="body-text drop-cap">
+        DiplomacySim puts you inside tense policy rooms where information is incomplete and every option has a price. You may be a foreign minister, an envoy, a central banker, or a crisis adviser. Your job is simple to state and difficult to execute: choose the most defensible course before the clock closes.
+      </p>
+
+      <div class="pull-quote">
+        <p>"Good strategy is not about finding a perfect move. It is about choosing the least fragile one under pressure."</p>
+      </div>
+
+      <p class="body-text">
+        Each scenario gives you a concise briefing, a role, and four possible directives. Some options protect credibility. Some buy time. Some look decisive but create new damage. The point values stay hidden until after you commit.
+      </p>
+      <p class="body-text">
+        Your score reflects both judgment and speed. After each decision, the consequence report reveals every option so you can learn from the trade-offs instead of guessing blindly next time.
+      </p>
+
+      <!-- CTA buttons — updated by auth state -->
+      <div style="display:flex; gap:0; margin-top:18px;">
+        <a href="login.html" class="cta-btn" id="main-cta-btn" style="margin-top:0;">Begin Playing</a>
+        <a href="categories.html" class="cta-btn-outline" style="margin-top:0; margin-left:12px;">View Categories</a>
+      </div>
+
+    </div>
+
+    <div class="col-divider"></div>
+
+    <!-- Right column -->
+    <div style="padding-left:0;">
+
+      <span class="section-label">Ten Theatres</span>
+      <div style="height:10px;"></div>
+      <div style="border:1px solid #c8c0b0;background:#c8c0b0;display:flex;flex-direction:column;gap:1px;">
+        <a href="categories.html?t=Current+Affairs"           style="background:var(--paper);padding:9px 12px;text-decoration:none;color:inherit;display:flex;align-items:center;gap:10px;transition:background 0.15s;" onmouseover="this.style.background='var(--paper-alt)'" onmouseout="this.style.background='var(--paper)'"><span style="font-family:'Playfair Display',serif;font-size:15px;font-weight:900;color:var(--ink-muted);width:22px;flex-shrink:0;">01</span><span style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink);">Current Affairs</span></a>
+        <a href="categories.html?t=Historical+Events"         style="background:var(--paper);padding:9px 12px;text-decoration:none;color:inherit;display:flex;align-items:center;gap:10px;transition:background 0.15s;" onmouseover="this.style.background='var(--paper-alt)'" onmouseout="this.style.background='var(--paper)'"><span style="font-family:'Playfair Display',serif;font-size:15px;font-weight:900;color:var(--ink-muted);width:22px;flex-shrink:0;">02</span><span style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink);">Historical Events</span></a>
+        <a href="categories.html?t=Fictional+Scenarios"       style="background:var(--paper);padding:9px 12px;text-decoration:none;color:inherit;display:flex;align-items:center;gap:10px;transition:background 0.15s;" onmouseover="this.style.background='var(--paper-alt)'" onmouseout="this.style.background='var(--paper)'"><span style="font-family:'Playfair Display',serif;font-size:15px;font-weight:900;color:var(--ink-muted);width:22px;flex-shrink:0;">03</span><span style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink);">Fictional Scenarios</span></a>
+        <a href="categories.html?t=Economic+Strategy"         style="background:var(--paper);padding:9px 12px;text-decoration:none;color:inherit;display:flex;align-items:center;gap:10px;transition:background 0.15s;" onmouseover="this.style.background='var(--paper-alt)'" onmouseout="this.style.background='var(--paper)'"><span style="font-family:'Playfair Display',serif;font-size:15px;font-weight:900;color:var(--ink-muted);width:22px;flex-shrink:0;">04</span><span style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink);">Economic Strategy</span></a>
+        <a href="categories.html?t=Global+Diplomacy"          style="background:var(--paper);padding:9px 12px;text-decoration:none;color:inherit;display:flex;align-items:center;gap:10px;transition:background 0.15s;" onmouseover="this.style.background='var(--paper-alt)'" onmouseout="this.style.background='var(--paper)'"><span style="font-family:'Playfair Display',serif;font-size:15px;font-weight:900;color:var(--ink-muted);width:22px;flex-shrink:0;">05</span><span style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink);">Global Diplomacy</span></a>
+        <a href="categories.html?t=Intelligence"              style="background:var(--paper);padding:9px 12px;text-decoration:none;color:inherit;display:flex;align-items:center;gap:10px;transition:background 0.15s;" onmouseover="this.style.background='var(--paper-alt)'" onmouseout="this.style.background='var(--paper)'"><span style="font-family:'Playfair Display',serif;font-size:15px;font-weight:900;color:var(--ink-muted);width:22px;flex-shrink:0;">06</span><span style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink);">Intelligence &amp; Espionage</span></a>
+        <a href="categories.html?t=Nuclear"                   style="background:var(--paper);padding:9px 12px;text-decoration:none;color:inherit;display:flex;align-items:center;gap:10px;transition:background 0.15s;" onmouseover="this.style.background='var(--paper-alt)'" onmouseout="this.style.background='var(--paper)'"><span style="font-family:'Playfair Display',serif;font-size:15px;font-weight:900;color:var(--ink-muted);width:22px;flex-shrink:0;">07</span><span style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink);">Nuclear Brinkmanship</span></a>
+        <a href="categories.html?t=Environmental"             style="background:var(--paper);padding:9px 12px;text-decoration:none;color:inherit;display:flex;align-items:center;gap:10px;transition:background 0.15s;" onmouseover="this.style.background='var(--paper-alt)'" onmouseout="this.style.background='var(--paper)'"><span style="font-family:'Playfair Display',serif;font-size:15px;font-weight:900;color:var(--ink-muted);width:22px;flex-shrink:0;">08</span><span style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink);">Environmental Crises</span></a>
+        <a href="categories.html?t=Humanitarian"              style="background:var(--paper);padding:9px 12px;text-decoration:none;color:inherit;display:flex;align-items:center;gap:10px;transition:background 0.15s;" onmouseover="this.style.background='var(--paper-alt)'" onmouseout="this.style.background='var(--paper)'"><span style="font-family:'Playfair Display',serif;font-size:15px;font-weight:900;color:var(--ink-muted);width:22px;flex-shrink:0;">09</span><span style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink);">Humanitarian &amp; Human Rights</span></a>
+        <a href="categories.html?t=Cyber"                     style="background:var(--paper);padding:9px 12px;text-decoration:none;color:inherit;display:flex;align-items:center;gap:10px;transition:background 0.15s;" onmouseover="this.style.background='var(--paper-alt)'" onmouseout="this.style.background='var(--paper)'"><span style="font-family:'Playfair Display',serif;font-size:15px;font-weight:900;color:var(--ink-muted);width:22px;flex-shrink:0;">10</span><span style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink);">Cyber Warfare</span></a>
+      </div>
+
+      <!-- Live mini leaderboard -->
+      <div style="margin-top:18px;">
+        <span class="section-label">Top Strategists</span>
+        <div style="height:10px;"></div>
+        <table class="leaderboard-table">
+          <thead>
+            <tr>
+              <th width="36">Rank</th>
+              <th>Diplomat</th>
+              <th style="text-align:right">Points</th>
+            </tr>
+          </thead>
+          <tbody id="mini-leaderboard">
+            <tr>
+              <td colspan="3" style="font-size:12px;font-style:italic;color:var(--ink-muted);padding:10px 0;">
+                <span class="skeleton" style="height:13px;width:180px;"></span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="margin-top:10px;">
+          <a href="leaderboard.html" style="font-size:11px;font-family:'Libre Baskerville',serif;color:var(--accent);letter-spacing:0.06em;text-decoration:none;font-style:italic;">View full rankings →</a>
+        </div>
+      </div>
+
+      <!-- Theatre of the Week -->
+      <div style="margin-top:20px; padding-top:16px; border-top:2px solid var(--rule);" id="theatre-of-week">
+        <span style="font-size:9px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:6px;">Theatre of the Week</span>
+        <div class="headline-md" id="totw-title">Loading…</div>
+        <div class="byline" id="totw-sub">Scenario Desk</div>
+        <p class="body-text" style="font-size:12.5px;" id="totw-stats">—</p>
+        <a id="totw-link" href="categories.html" style="font-size:11px;font-family:'Libre Baskerville',serif;color:var(--accent);letter-spacing:0.06em;text-decoration:none;font-style:italic;">Enter this theatre →</a>
+      </div>
+
+    </div>
+  </div>
+  <!-- END MAIN GRID -->
+
+  <!-- Bottom three-column section -->
+  <hr class="thick">
+  <div class="grid-bottom">
+    <div class="col" style="padding-left:0;">
+      <span class="section-label">Current Affairs</span>
+      <div style="height:10px;"></div>
+      <div class="headline-sm">Taiwan Strait Flashpoint</div>
+      <div class="byline">Current Affairs · Live-crisis briefing</div>
+      <p class="body-text" style="font-size:12.5px;">
+        Naval movements narrow the room for error. Your response must reassure allies without turning a warning into a war.
+      </p>
+    </div>
+    <div class="col">
+      <span class="section-label">Economic Strategy</span>
+      <div style="height:10px;"></div>
+      <div class="headline-sm">Sovereign Debt Deadline</div>
+      <div class="byline">Economic Strategy · Market-stress briefing</div>
+      <p class="body-text" style="font-size:12.5px;">
+        Bond markets are moving faster than parliament. You need a plan that restores confidence without wrecking the public mandate.
+      </p>
+    </div>
+    <div class="col">
+      <span class="section-label">Historical Events</span>
+      <div style="height:10px;"></div>
+      <div class="headline-sm">Cuban Missile Crisis, Revisited</div>
+      <div class="byline">Historical Events · Archival pressure test</div>
+      <p class="body-text" style="font-size:12.5px;">
+        October 1962. Missiles are confirmed in Cuba. Can you create an off-ramp while the military timetable accelerates?
+      </p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span>© DiplomacySim Educational Platform</span>
+    <span>
+      <a href="admin.html">Admin Portal</a> &nbsp;·&nbsp;
+      <a href="leaderboard.html">Leaderboard</a> &nbsp;·&nbsp;
+      <a href="forum.html">Forum</a> &nbsp;·&nbsp;
+      <a href="login.html" id="footer-auth-link" style="display:none;">Sign In</a>
+    </span>
+    <span>All scenarios for educational use only</span>
+  </div>
+
+</div><!-- .page -->
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+
+<script>
+  // ── Date ──────────────────────────────────────────────────
+  const d = new Date();
+  document.getElementById('topbar-date').textContent =
+    d.toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  // ── Firebase init ──────────────────────────────────────────
+  const firebaseConfig = {
+    apiKey: "AIzaSyC_-1B2F9A8tXoPDlmJT4Gf2XPVNcRr94s",
+    authDomain: "diplomacysim-110de.firebaseapp.com",
+    projectId: "diplomacysim-110de",
+    storageBucket: "diplomacysim-110de.firebasestorage.app",
+    messagingSenderId: "29829728460",
+    appId: "1:29829728460:web:7c15e8bc421e2dd56dda69"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db   = firebase.firestore();
+
+  function escapeHTML(value) {
+    return String(value == null ? '' : value).replace(/[&<>"']/g, function(ch) {
+      return ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[ch];
+    });
+  }
+
+  // ── Auth state ─────────────────────────────────────────────
+  auth.onAuthStateChanged(function(user) {
+    const signinLink   = document.getElementById('nav-signin-link');
+    const registerLink = document.getElementById('nav-register-link');
+    const footerLink   = document.getElementById('footer-auth-link');
+    const topbarDot    = document.getElementById('topbar-dot-1');
+
+    if (user) {
+      // ── Topbar user pill ──
+      document.getElementById('topbar-signin-link').style.display = 'none';
+      if (topbarDot) topbarDot.style.display = 'none';
+      document.getElementById('user-pill').style.display = 'flex';
+      document.getElementById('user-display-name').textContent = user.displayName || user.email;
+
+      // ── Admin link (loads from Firestore config) ──
+      DS_CONFIG.load(db).then(function() {
+        var adminLink   = document.getElementById('nav-admin-link');
+        var topbarAdmin = document.getElementById('topbar-admin-link');
+        if (adminLink)   adminLink.style.display   = DS_CONFIG.isAdmin(user.email) ? 'inline-block' : 'none';
+        if (topbarAdmin) topbarAdmin.style.display  = DS_CONFIG.isAdmin(user.email) ? 'inline-block' : 'none';
+      });
+
+      // ── Nav: hide Sign In + Register, show Sign Out ──
+      if (signinLink) {
+        signinLink.textContent = 'Sign Out';
+        signinLink.href = '#';
+        signinLink.classList.add('signout');
+        signinLink.style.display = 'inline-block';
+        signinLink.onclick = function(e) { e.preventDefault(); doSignOut(); };
+      }
+      if (registerLink) registerLink.style.display = 'none';
+
+      // ── Update CTA buttons to go to Play Now ──
+      document.getElementById('main-cta-btn').textContent = 'Play Now';
+      document.getElementById('main-cta-btn').href = 'categories.html';
+      document.getElementById('ad-cta-btn').textContent = 'Play Now';
+      document.getElementById('ad-cta-btn').href = 'categories.html';
+
+      // ── Footer auth link → Sign Out ──
+      if (footerLink) {
+        footerLink.textContent = 'Sign Out';
+        footerLink.href = '#';
+        footerLink.style.display = 'inline';
+        footerLink.onclick = function(e) { e.preventDefault(); doSignOut(); };
+      }
+
+    } else {
+      document.getElementById('topbar-signin-link').style.display = 'inline';
+      document.getElementById('user-pill').style.display = 'none';
+      if (topbarDot) topbarDot.style.display = 'inline';
+      if (signinLink) {
+        signinLink.textContent = 'Sign In';
+        signinLink.href = 'login.html';
+        signinLink.classList.remove('signout');
+        signinLink.onclick = null;
+        signinLink.style.display = 'inline-block';
+      }
+      if (registerLink) registerLink.style.display = 'inline-block';
+      if (footerLink) {
+        footerLink.textContent = 'Sign In';
+        footerLink.href = 'login.html';
+        footerLink.onclick = null;
+        footerLink.style.display = 'inline';
+      }
+    }
+  });
+
+  // ── Sign out ───────────────────────────────────────────────
+  function doSignOut() {
+    auth.signOut().then(function() {
+      window.location.href = 'login.html';
+    });
+  }
+
+  // ── Register nav link helper ───────────────────────────────
+  function goRegister(e) {
+    // Goes to login.html and switches to register tab
+    // The login page reads this from sessionStorage
+    sessionStorage.setItem('openTab', 'register');
+  }
+
+  // ── Live mini leaderboard from Firestore ───────────────────
+  db.collection("users")
+    .orderBy("total_points", "desc")
+    .limit(5)
+    .get()
+    .then(function(snap) {
+      if (snap.empty) {
+        document.getElementById('mini-leaderboard').innerHTML =
+          '<tr><td colspan="3" style="font-size:12px;font-style:italic;color:var(--ink-muted);padding:10px 0;">No dispatches on record. File a directive to appear here.</td></tr>';
+        return;
+      }
+
+      const romanRanks = ['I','II','III','IV','V'];
+      const rankClasses = ['gold','silver','bronze','',''];
+      let html = '';
+
+      snap.docs.forEach(function(doc, i) {
+        const data = doc.data();
+        const name = data.username || data.email || 'Anonymous';
+        const pts  = (data.total_points || 0).toLocaleString();
+        html += `
+          <tr>
+            <td class="rank-num ${rankClasses[i]}">${romanRanks[i]}</td>
+            <td class="body-text" style="font-size:12.5px;">${escapeHTML(name)}</td>
+            <td class="pts">${pts}</td>
+          </tr>`;
+      });
+
+      document.getElementById('mini-leaderboard').innerHTML = html;
+    })
+    .catch(function(err) {
+      console.warn('Leaderboard load failed:', err);
+      document.getElementById('mini-leaderboard').innerHTML =
+        '<tr><td colspan="3" style="font-size:12px;font-style:italic;color:var(--ink-muted);">Rankings unavailable.</td></tr>';
+    });
+
+  // ── Onboarding tutorial (first-time visitors) ────────────
+  (function() {
+    if (localStorage.getItem('diplomacySimOnboardingSeen')) return;
+
+    var steps = [
+      { num: 'I',   head: 'Choose a Theatre',      body: 'Pick from ten crisis categories — Current Affairs, Historical Events, Cyber Warfare, Nuclear Brinkmanship, and more. Each loads a fresh briefing.' },
+      { num: 'II',  head: 'Read, Then Decide',      body: 'You have 120 seconds. Read the briefing carefully, then select one of four policy directives. Your choice is final, and speed earns a bonus multiplier.' },
+      { num: 'III', head: 'Review the Consequences', body: 'After submitting, the consequence report reveals all options and scores. Sign in to keep your points, climb the leaderboard, and track your record across theatres.' },
+    ];
+
+    var overlay = document.createElement('div');
+    overlay.id = 'onboarding-overlay';
+    overlay.style.cssText = [
+      'position:fixed',
+      'top:0','right:0','bottom:0','left:0',
+      'width:100%','height:100%',
+      'background:rgba(26,23,19,0.88)',
+      'z-index:10000',
+      'display:flex',
+      'align-items:center',
+      'justify-content:center',
+      'padding:16px',
+      'box-sizing:border-box',
+      'overflow-y:auto'
+    ].join(';');
+
+    // Lock body scroll while modal is open
+    document.body.style.overflow = 'hidden';
+
+    var box = document.createElement('div');
+    box.style.cssText = [
+      'background:var(--paper)',
+      'max-width:520px',
+      'width:100%',
+      'border-top:4px solid var(--ink)',
+      'box-shadow:0 20px 60px rgba(0,0,0,0.4)',
+      'max-height:calc(100vh - 40px)',
+      'overflow-y:auto',
+      'margin:auto'
+    ].join(';');
+
+    var state = { step: 0 };
+
+    function render() {
+      var s = steps[state.step];
+      var isLast = state.step === steps.length - 1;
+      var vp = Math.min(window.innerWidth, window.innerHeight);
+      var pad = vp < 480 ? '18px 20px 16px' : '28px 30px 24px';
+      var numSize = vp < 480 ? '36px' : '48px';
+      var headSize = vp < 480 ? '17px' : '20px';
+      var bodySize = vp < 480 ? '12.5px' : '13.5px';
+      box.innerHTML =
+        '<div style="padding:' + pad + ';">'
+          + '<div style="font-size:9px;font-weight:700;letter-spacing:0.28em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:16px;">Welcome to DiplomacySim &nbsp;·&nbsp; Step ' + (state.step+1) + ' of ' + steps.length + '</div>'
+          + '<div style="display:flex;gap:16px;align-items:flex-start;">'
+            + '<div style="font-family:\'Playfair Display\',serif;font-size:' + numSize + ';font-weight:900;line-height:1;color:var(--ink-muted);flex-shrink:0;width:52px;">' + s.num + '</div>'
+            + '<div>'
+              + '<div style="font-family:\'Playfair Display\',serif;font-size:' + headSize + ';font-weight:700;color:var(--ink);margin-bottom:10px;">' + s.head + '</div>'
+              + '<div style="font-family:\'Libre Baskerville\',serif;font-size:' + bodySize + ';line-height:1.75;color:var(--ink-light);">' + s.body + '</div>'
+            + '</div>'
+          + '</div>'
+          + '<div style="display:flex;gap:6px;margin-top:18px;">'
+            + steps.map(function(_,i){ return '<div style="height:3px;flex:1;background:' + (i<=state.step?'var(--ink)':'#d8d0c0') + ';transition:background 0.3s;"></div>'; }).join('')
+          + '</div>'
+        + '</div>'
+        + '<div style="border-top:1px solid #c8c0b0;padding:14px 30px;display:flex;justify-content:space-between;align-items:center;background:var(--cream);">'
+          + '<button id="ob-skip" style="font-family:\'Libre Baskerville\',serif;font-size:10.5px;color:var(--ink-muted);background:none;border:none;cursor:pointer;letter-spacing:0.06em;">Skip intro</button>'
+          + '<button id="ob-next" style="font-family:\'Libre Baskerville\',serif;font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--paper);background:var(--ink);border:2px solid var(--ink);padding:10px 24px;cursor:pointer;">'
+            + (isLast ? 'Enter the Briefing Room' : 'Next →')
+          + '</button>'
+        + '</div>';
+
+      box.querySelector('#ob-skip').onclick = dismiss;
+      box.querySelector('#ob-next').onclick = function() {
+        if (isLast) { dismiss(); }
+        else { state.step++; render(); }
+      };
+    }
+
+    function dismiss() {
+      localStorage.setItem('diplomacySimOnboardingSeen', '1');
+      document.body.style.overflow = ''; // restore scroll
+      overlay.style.opacity = '0';
+      overlay.style.transition = 'opacity 0.3s';
+      setTimeout(function(){
+        if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+      }, 300);
+    }
+
+    render();
+    overlay.appendChild(box);
+    overlay.addEventListener('click', function(e){ if (e.target === overlay) dismiss(); });
+    document.body.appendChild(overlay);
+    // Fade in
+    overlay.style.opacity = '0';
+    overlay.style.transition = 'opacity 0.35s';
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ overlay.style.opacity = '1'; }); });
+  })();
+
+  // ── Quick-play random scenario ────────────────────────────
+  function goQuickPlay() {
+    db.collection('scenarios').get().then(function(snap) {
+      if (snap.empty) { window.location.href = 'categories.html'; return; }
+      var pick = snap.docs[Math.floor(Math.random() * snap.docs.length)];
+      var d    = pick.data();
+      localStorage.setItem('selectedCategory', d.category || '');
+      window.location.href = 'scenario.html?id=' + pick.id;
+    }).catch(function(){ window.location.href = 'categories.html'; });
+  }
+
+  // ── Live stats bar ────────────────────────────────────────
+  (function() {
+    Promise.all([
+      db.collection('users').get(),
+      db.collection('scenarios').get()
+    ]).then(function(results) {
+      var players   = results[0].size;
+      var scenarios = results[1].size;
+      document.getElementById('live-stats-bar').innerHTML =
+        '<strong>' + players.toLocaleString() + '</strong> registered diplomats &nbsp;·&nbsp; '
+        + '<strong>' + scenarios.toLocaleString() + '</strong> briefings across 10 theatres &nbsp;·&nbsp; '
+        + '<a href="leaderboard.html" style="color:var(--accent);text-decoration:none;">View full rankings →</a>';
+    }).catch(function(){
+      document.getElementById('live-stats-bar').style.display = 'none';
+    });
+  })();
+
+  // ── Dynamic ticker with real scenario titles ──────────────
+  (function() {
+    db.collection('scenarios').limit(20).get().then(function(snap) {
+      if (snap.empty) return;
+      var titles = snap.docs.map(function(d){ return d.data().title || ''; }).filter(Boolean);
+      if (titles.length < 4) return;
+      // shuffle
+      titles.sort(function(){ return Math.random() - 0.5; });
+      var items = titles.slice(0, 8);
+      var doubled = items.concat(items); // double for seamless loop
+      var html = doubled.map(function(t){ return '<span>' + t + '</span>'; }).join('');
+      var ticker = document.getElementById('ticker-inner');
+      if (ticker) ticker.innerHTML = html;
+    }).catch(function(){});
+  })();
+
+  // ── Theatre of the Week ───────────────────────────────────
+  (function() {
+    var theatres = [
+      'Current Affairs','Historical Events','Fictional Scenarios','Economic Strategy',
+      'Global Diplomacy','Intelligence & Espionage','Nuclear Brinkmanship',
+      'Environmental Crises','Humanitarian & Human Rights','Cyber Warfare'
+    ];
+    var week = Math.floor(Date.now() / (1000 * 60 * 60 * 24 * 7));
+    var pick = theatres[week % theatres.length];
+    db.collection('scenarios').where('category','==',pick).get().then(function(snap) {
+      document.getElementById('totw-title').textContent = pick;
+      document.getElementById('totw-sub').textContent   = snap.size + ' briefings available · Scenario Desk';
+      document.getElementById('totw-stats').textContent = 'This week\'s featured theatre. ' + snap.size + ' unique crisis scenarios to work through.';
+      document.getElementById('totw-link').href         = 'categories.html?t=' + encodeURIComponent(pick);
+    }).catch(function(){});
+  })();
+
+  // ── Featured / Daily scenario on homepage ─────────────────
+  (function() {
+    db.collection('scenarios').get().then(function(snap) {
+      if (snap.empty) return;
+      var docs  = snap.docs;
+      var today = new Date();
+      var seed  = today.getFullYear() * 10000 + (today.getMonth()+1) * 100 + today.getDate();
+      var pick  = docs[seed % docs.length];
+      var d     = pick.data();
+      document.getElementById('featured-title').textContent = d.title    || 'Today\'s Briefing';
+      document.getElementById('featured-cat').textContent   = d.category || '';
+      document.getElementById('featured-btn').href          = 'scenario.html?id=' + pick.id;
+      document.getElementById('featured-box').style.display = 'block';
+    }).catch(function(){});
+  })();
+</script>
+
+<!-- Mobile bottom nav -->
+<nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+  <div class="mobile-bottom-nav-inner">
+    <a href="index.html" class="mobile-nav-btn"><span class="mobile-nav-icon">🏠</span>Home</a>
+    <a href="categories.html" class="mobile-nav-btn"><span class="mobile-nav-icon">⚔</span>Play</a>
+    <a href="leaderboard.html" class="mobile-nav-btn"><span class="mobile-nav-icon">🏆</span>Rankings</a>
+    <a href="forum.html" class="mobile-nav-btn"><span class="mobile-nav-icon">💬</span>Forum</a>
+    <a href="profile.html" class="mobile-nav-btn"><span class="mobile-nav-icon">👤</span>Profile</a>
+  </div>
+</nav>
+</body>
+</html>
